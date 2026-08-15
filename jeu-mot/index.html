@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Mot mystère</title>
+    <meta name="description" content="Devinez le mot du jour en six tentatives." />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/style-commun.css" />
+    <link rel="stylesheet" href="jeu.css" />
+  </head>
+  <body>
+    <header class="jm-entete">
+      <a class="jm-retour" href="../index.html">← Les jeux</a>
+      <h1>Mot mystère</h1>
+      <div class="jm-actions">
+        <button class="jm-bouton jm-bouton--icone" id="btn-aide" aria-label="Règles du jeu" title="Règles">?</button>
+        <button class="jm-bouton jm-bouton--icone" id="btn-stats" aria-label="Statistiques" title="Statistiques">▤</button>
+      </div>
+    </header>
+
+    <main id="jeu" hidden>
+      <div class="plateau-zone">
+        <div id="plateau" class="plateau" role="grid" aria-label="Grille des tentatives"></div>
+      </div>
+      <div id="clavier" class="clavier" aria-label="Clavier"></div>
+    </main>
+
+    <div id="chargement" class="jm-chargement">
+      <p>Chargement du dictionnaire…</p>
+    </div>
+
+    <div id="erreur" class="jm-erreur" hidden></div>
+
+    <div class="jm-message" id="messages" aria-live="polite" aria-atomic="false"></div>
+    <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+    <!-- Règles -->
+    <dialog class="jm-modale" id="modale-aide">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Règles</h2>
+        <p>
+          Trouvez le mot du jour en <strong>6 tentatives</strong>. Chaque proposition doit être
+          un mot existant, de la bonne longueur.
+        </p>
+
+        <h3>Après chaque tentative</h3>
+        <ul class="legende">
+          <li><span class="case case--juste" aria-hidden="true">A</span> la lettre est dans le mot, au bon endroit</li>
+          <li><span class="case case--present" aria-hidden="true">B</span> la lettre est dans le mot, mais ailleurs</li>
+          <li><span class="case case--absent" aria-hidden="true">C</span> la lettre n’est pas dans le mot</li>
+        </ul>
+        <p class="jm-note">
+          Si une lettre est présente en double dans votre proposition mais une seule fois dans
+          le mot, une seule des deux est colorée.
+        </p>
+
+        <h3>Mots acceptés</h3>
+        <ul>
+          <li>Toutes les formes du dictionnaire : pluriels, féminins et <strong>conjugaisons</strong>.</li>
+          <li>
+            Les accents ne se saisissent pas et ne comptent pas : tapez <em>eleve</em>, le mot
+            s’affichera accentué à la fin de la partie.
+          </li>
+          <li>Pas de noms propres, pas de mots à trait d’union ni d’apostrophe.</li>
+        </ul>
+
+        <h3>Le mot du jour</h3>
+        <p>
+          Il est calculé à partir de la date : tout le monde cherche le même mot le même jour,
+          et il change à minuit. Rien n’est envoyé sur Internet, votre partie reste sur cet
+          appareil.
+        </p>
+
+        <h3>Dictionnaire</h3>
+        <p class="jm-note">
+          Français : Dicollecte / Grammalecte (Olivier R.), sous licence MPL 2.0. Les propositions
+          sont validées contre les 469 007 formes fléchies du dictionnaire ; le mot à deviner, lui,
+          est tiré d’une sélection de 1 629 mots courants, pour éviter de tomber sur une entrée que
+          personne ne connaît.
+        </p>
+
+        <p class="ligne-boutons">
+          <label class="option">
+            <input type="checkbox" id="opt-palette" />
+            Couleurs à fort contraste (bleu / orange)
+          </label>
+        </p>
+      </div>
+    </dialog>
+
+    <!-- Statistiques et fin de partie -->
+    <dialog class="jm-modale" id="modale-stats">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2 id="stats-titre">Statistiques</h2>
+        <p id="stats-solution" class="solution" hidden></p>
+
+        <div class="stats-chiffres" id="stats-chiffres"></div>
+
+        <h3>Répartition des victoires</h3>
+        <div class="stats-barres" id="stats-barres"></div>
+
+        <div class="fin-zone" id="fin-zone" hidden>
+          <div class="compte-a-rebours">
+            <span class="jm-note">Prochain mot dans</span>
+            <strong id="rebours">—</strong>
+          </div>
+          <button class="jm-bouton jm-bouton--principal" id="btn-partager">Copier mon résultat</button>
+        </div>
+
+        <p class="ligne-boutons">
+          <button class="jm-bouton jm-bouton--discret" id="btn-effacer">Effacer mes données</button>
+        </p>
+      </div>
+    </dialog>
+
+    <script src="../shared/seed.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/dico.js"></script>
+    <script src="jeu.js"></script>
+  </body>
+</html>

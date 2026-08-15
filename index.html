@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Jeux de mots</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="shared/style-commun.css" />
+    <style>
+      .accueil {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+      .accueil h1 {
+        font-size: 1.6rem;
+        margin-bottom: 4px;
+      }
+      .liste-jeux {
+        display: grid;
+        gap: 12px;
+        margin-top: 28px;
+      }
+      .carte-jeu {
+        display: block;
+        padding: 16px 18px;
+        border: 1px solid var(--bord);
+        border-radius: 14px;
+        background: var(--fond-carte);
+        text-decoration: none;
+        color: inherit;
+        box-shadow: var(--ombre);
+      }
+      .carte-jeu:hover {
+        border-color: var(--bord-fort);
+      }
+      .carte-jeu[aria-disabled='true'] {
+        opacity: 0.55;
+        pointer-events: none;
+        box-shadow: none;
+      }
+      .carte-jeu b {
+        font-size: 1.05rem;
+      }
+      .carte-jeu p {
+        margin: 4px 0 0;
+        font-size: 0.9rem;
+        color: var(--texte-doux);
+      }
+      .drapeau {
+        float: right;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--texte-doux);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="accueil">
+      <h1>Jeux de mots</h1>
+      <p class="jm-note">
+        Quatre jeux, aucun compte, aucune publicité, aucun suivi. Tout se passe dans le
+        navigateur.
+      </p>
+
+      <nav class="liste-jeux">
+        <a class="carte-jeu" href="jeu-mot/index.html">
+          <span class="drapeau">FR · quotidien</span>
+          <b>Mot mystère</b>
+          <p>Six tentatives pour trouver le mot du jour.</p>
+        </a>
+
+        <a class="carte-jeu" href="jeu-grille/index.html">
+          <span class="drapeau">FR · quotidien</span>
+          <b>Grille de lettres</b>
+          <p>Trois minutes pour relier les lettres voisines et former un maximum de mots.</p>
+        </a>
+
+        <a class="carte-jeu" href="jeu-grille-en/index.html">
+          <span class="drapeau">EN · quotidien</span>
+          <b>Grille anglaise</b>
+          <p>La même grille, en anglais, avec au moins un mot de huit lettres caché dedans.</p>
+        </a>
+
+        <a class="carte-jeu" href="jeu-fleur/index.html">
+          <span class="drapeau">FR · 2 semaines</span>
+          <b>Fleur de lettres</b>
+          <p>Sept lettres, celle du centre obligatoire, deux semaines pour tout trouver.</p>
+        </a>
+      </nav>
+
+      <p class="jm-note" style="margin-top: 32px">
+        Dictionnaires : Dicollecte / Grammalecte (MPL 2.0) pour le français, ENABLE2K (domaine
+        public) pour l’anglais — détails dans
+        <a href="shared/dictionnaires/LICENCES_ET_SOURCES.md">LICENCES_ET_SOURCES.md</a>.
+      </p>
+    </div>
+  </body>
+</html>

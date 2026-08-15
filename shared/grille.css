@@ -1,0 +1,359 @@
+/* Styles communs aux deux jeux de grille 4×4. */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Bandeau chrono / score ---------- */
+
+.barre {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--fond-carte);
+  border-bottom: 1px solid var(--bord);
+}
+
+.barre div {
+  text-align: center;
+}
+
+.barre b {
+  display: block;
+  font-family: var(--police-mots);
+  font-size: 1.5rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.barre span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texte-doux);
+}
+
+.chrono--urgence {
+  color: #c9452b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chrono--urgence {
+    color: #f08a6d;
+  }
+}
+
+/* ---------- Zone de jeu ---------- */
+
+.zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  min-height: 0;
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: min(92vw, 20rem, var(--hauteur-grille, 20rem));
+  touch-action: none; /* le glissé sélectionne des lettres, il ne fait pas défiler */
+  container-type: inline-size; /* la taille des lettres suit la grille, pas la fenêtre */
+}
+
+.case-grille {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-family: var(--police-mots);
+  font-size: clamp(1.1rem, 7vw, 2.1rem);
+  font-size: min(12cqw, 2.1rem);
+  font-weight: 700;
+  overflow: hidden;
+  text-transform: uppercase;
+  color: var(--texte);
+  background: var(--fond-carte);
+  border: 2px solid var(--bord);
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease, border-color 0.1s ease, transform 0.1s ease;
+}
+
+.case-grille:hover {
+  border-color: var(--bord-fort);
+}
+
+.case-grille--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: scale(0.96);
+}
+
+.case-grille--depart {
+  box-shadow: inset 0 0 0 3px var(--fond-carte);
+}
+
+/* ---------- Saisie ---------- */
+
+.saisie-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(92vw, 20rem);
+}
+
+.saisie {
+  flex: 1;
+  min-height: 2.9rem;
+  display: grid;
+  place-items: center;
+  padding: 4px 10px;
+  font-family: var(--police-mots);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--fond-doux);
+  border: 1px dashed var(--bord-fort);
+  border-radius: var(--rayon);
+  word-break: break-all;
+}
+
+.saisie--vide::before {
+  content: attr(data-invite);
+  font-family: var(--police);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--texte-doux);
+}
+
+.saisie--refus {
+  animation: refus 0.4s ease;
+  border-color: #c9452b;
+}
+
+@keyframes refus {
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.boutons-saisie {
+  display: flex;
+  gap: 6px;
+}
+
+/* ---------- Liste des mots trouvés ---------- */
+
+.trouves {
+  width: min(92vw, 26rem);
+  flex: 1;
+  min-height: 4rem;
+  overflow-y: auto;
+}
+
+.trouves ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.mot-trouve {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  background: var(--accent-doux);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  animation: jm-apparition 0.2s ease;
+}
+
+.mot-trouve b {
+  font-size: 0.72rem;
+  color: var(--accent);
+}
+
+/* ---------- Écran de départ ---------- */
+
+.depart {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: color-mix(in srgb, var(--fond) 88%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.depart-carte {
+  max-width: 22rem;
+  text-align: center;
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  border-radius: 16px;
+  box-shadow: var(--ombre);
+  padding: 24px;
+}
+
+.depart-carte h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+}
+
+.depart-carte p {
+  margin: 0 0 18px;
+  font-size: 0.92rem;
+  color: var(--texte-doux);
+}
+
+.depart-carte .option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+main {
+  position: relative;
+}
+
+/* ---------- Messages ---------- */
+
+.message--succes {
+  background: var(--etat-juste) !important;
+  color: #fff !important;
+}
+
+.message--refus {
+  background: var(--texte) !important;
+  color: var(--fond) !important;
+}
+
+/* ---------- Écran de fin ---------- */
+
+.fin-chiffres {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 4px;
+  text-align: center;
+}
+
+.fin-chiffres b {
+  display: block;
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+
+.fin-chiffres span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-doux);
+}
+
+.restants {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 11rem;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.restants li {
+  padding: 2px 8px;
+  background: var(--fond-doux);
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.fin-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Écrans larges : grille à gauche, mots à droite ---------- */
+
+@media (min-width: 780px) {
+  /* Deux colonnes de largeur fixe pour que l'ensemble reste centré, et une
+     troisième rangée élastique qui absorbe la hauteur de la liste des mots :
+     sans elle, la liste étirerait la rangée de la saisie. */
+  .zone {
+    display: grid;
+    grid-template-columns: min(22rem, 42vw) min(26rem, 42vw);
+    grid-template-rows: auto auto 1fr;
+    justify-content: center;
+    align-content: start;
+    column-gap: 28px;
+  }
+  .grille {
+    grid-column: 1;
+    grid-row: 1;
+    width: min(22rem, 42vw);
+  }
+  .saisie-zone {
+    grid-column: 1;
+    grid-row: 2;
+    width: min(22rem, 42vw);
+  }
+  .trouves {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: start;
+    width: 100%;
+    max-height: 62vh;
+  }
+  .trouves ul {
+    justify-content: flex-start;
+  }
+}

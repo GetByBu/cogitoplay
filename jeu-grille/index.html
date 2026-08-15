@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Grille de lettres</title>
+    <meta name="description" content="Reliez les lettres voisines pour former un maximum de mots." />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/style-commun.css" />
+    <link rel="stylesheet" href="../shared/grille.css" />
+  </head>
+  <body>
+    <header class="jm-entete">
+      <a class="jm-retour" href="../index.html">← Les jeux</a>
+      <h1>Grille de lettres</h1>
+      <div class="jm-actions">
+        <button class="jm-bouton jm-bouton--icone" id="btn-aide" aria-label="Règles du jeu" title="Règles">?</button>
+        <button class="jm-bouton jm-bouton--icone" id="btn-resultats" aria-label="Résultats" title="Résultats">▤</button>
+      </div>
+    </header>
+
+    <main id="jeu" hidden>
+      <div class="barre">
+        <div><b id="chrono">3:00</b><span>Temps</span></div>
+        <div><b id="score">0</b><span>Points</span></div>
+        <div><b id="compteur">0</b><span>Mots</span></div>
+        <button class="jm-bouton jm-bouton--discret" id="btn-terminer" hidden>Terminer</button>
+      </div>
+
+      <div class="zone">
+        <div id="grille" class="grille" role="group" aria-label="Grille de lettres"></div>
+
+        <div class="saisie-zone">
+          <div id="saisie" class="saisie saisie--vide" data-invite="Formez un mot" aria-live="polite"></div>
+          <div class="boutons-saisie">
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la saisie">✕</button>
+            <button class="jm-bouton jm-bouton--principal" id="btn-valider">Valider</button>
+          </div>
+        </div>
+
+        <div class="trouves">
+          <ul id="liste-mots" aria-label="Mots trouvés"></ul>
+        </div>
+      </div>
+
+      <div class="depart" id="depart" hidden>
+        <div class="depart-carte">
+          <h2>La grille du jour</h2>
+          <p>
+            Trois minutes pour former le plus de mots possible en reliant des lettres qui se
+            touchent. La grille est la même pour tout le monde aujourd’hui.
+          </p>
+          <button class="jm-bouton jm-bouton--principal" id="btn-commencer">Commencer</button>
+          <label class="option">
+            <input type="checkbox" id="opt-libre" />
+            Mode libre, sans chrono
+          </label>
+        </div>
+      </div>
+    </main>
+
+    <div id="chargement" class="jm-chargement">
+      <p>Chargement du dictionnaire…</p>
+    </div>
+
+    <div id="erreur" class="jm-erreur" hidden></div>
+
+    <div class="jm-message" id="messages" aria-live="polite"></div>
+    <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+    <!-- Règles -->
+    <dialog class="jm-modale" id="modale-aide">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Règles</h2>
+
+        <h3>Former un mot</h3>
+        <ul>
+          <li>
+            Les lettres doivent <strong>se toucher</strong> : horizontalement, verticalement ou en
+            diagonale.
+          </li>
+          <li>Une case ne peut servir <strong>qu’une seule fois</strong> dans un même mot.</li>
+          <li><strong>4 lettres minimum.</strong></li>
+          <li>
+            Au clavier : tapez le mot puis Entrée. À la souris ou au doigt : cliquez les lettres
+            l’une après l’autre, ou faites glisser.
+          </li>
+        </ul>
+
+        <h3>Mots acceptés</h3>
+        <ul>
+          <li>
+            Les mots au dictionnaire : noms, adjectifs, adverbes, et les verbes
+            <strong>à l’infinitif</strong>.
+          </li>
+          <li>
+            Les formes conjuguées sont <strong>refusées</strong> : <em>manger</em> compte,
+            <em>mangeais</em> non. Les participes ne comptent que lorsqu’ils sont aussi des mots à
+            part entière (<em>ouvert</em>, <em>chantant</em>, <em>finissant</em>).
+          </li>
+          <li>Pas de pluriels, pas de féminins, pas de noms propres.</li>
+          <li>
+            Les accents ne se saisissent pas : tapez <em>hematome</em>, le mot s’affichera accentué
+            dans la liste.
+          </li>
+        </ul>
+
+        <h3>Points</h3>
+        <p>
+          4 lettres = 1 point · 5 = 2 · 6 = 3 · 7 = 5 · 8 et plus = 11. Chaque grille contient au
+          moins un mot de 7 lettres.
+        </p>
+
+        <h3>La grille du jour</h3>
+        <p>
+          Elle est calculée à partir de la date : tout le monde joue la même grille le même jour,
+          et elle change à minuit. Rien n’est envoyé sur Internet, votre partie reste sur cet
+          appareil.
+        </p>
+
+        <p class="jm-note">
+          Dictionnaire : Dicollecte / Grammalecte (Olivier R.), MPL 2.0 — 67 216 formes de base.
+        </p>
+      </div>
+    </dialog>
+
+    <!-- Fin de partie -->
+    <dialog class="jm-modale" id="modale-fin">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Fin de la partie</h2>
+
+        <div class="fin-chiffres">
+          <div><b id="fin-score">0</b><span>Points</span></div>
+          <div><b id="fin-mots">0</b><span>Mots trouvés</span></div>
+          <div><b id="fin-record">0</b><span>Record</span></div>
+        </div>
+        <p class="jm-note" style="text-align: center">
+          Sur <b id="fin-total">0</b> mots possibles, soit <b id="fin-max">0</b> points au maximum.
+        </p>
+
+        <h3>Les plus longs que vous avez ratés</h3>
+        <ul class="restants" id="fin-restants"></ul>
+        <p style="text-align: center; margin: 10px 0 0">
+          <button class="jm-bouton jm-bouton--discret" id="btn-voir-tout" hidden></button>
+        </p>
+
+        <div class="fin-actions">
+          <button class="jm-bouton jm-bouton--principal" id="btn-partager">Copier mon résultat</button>
+          <a class="jm-bouton" href="../index.html">Les autres jeux</a>
+        </div>
+
+        <p class="ligne-boutons" style="margin-top: 18px; text-align: center">
+          <button class="jm-bouton jm-bouton--discret" id="btn-effacer-donnees">
+            Effacer mes données
+          </button>
+        </p>
+      </div>
+    </dialog>
+
+    <script src="../shared/seed.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/dico.js"></script>
+    <script src="../shared/grille.js"></script>
+    <script src="../shared/grille-ui.js"></script>
+    <script src="jeu.js"></script>
+  </body>
+</html>

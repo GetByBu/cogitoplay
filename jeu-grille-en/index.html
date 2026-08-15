@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Grille anglaise</title>
+    <meta
+      name="description"
+      content="La grille anglaise du jour : reliez les lettres voisines pour former un maximum de mots."
+    />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/style-commun.css" />
+    <link rel="stylesheet" href="../shared/grille.css" />
+  </head>
+  <body>
+    <header class="jm-entete">
+      <a class="jm-retour" href="../index.html" data-en="← Games">← Les jeux</a>
+      <h1 data-en="Letter Grid">Grille anglaise</h1>
+      <div class="jm-actions">
+        <button
+          class="jm-bouton jm-bouton--icone"
+          id="btn-langue"
+          aria-label="Switch to English"
+          title="Français / English"
+        >
+          EN
+        </button>
+        <button
+          class="jm-bouton jm-bouton--icone"
+          id="btn-aide"
+          aria-label="Règles du jeu"
+          data-en-aria="How to play"
+          title="Règles"
+        >
+          ?
+        </button>
+        <button
+          class="jm-bouton jm-bouton--icone"
+          id="btn-resultats"
+          aria-label="Résultats"
+          data-en-aria="Results"
+          title="Résultats"
+        >
+          ▤
+        </button>
+      </div>
+    </header>
+
+    <main id="jeu" hidden>
+      <div class="barre">
+        <div><b id="chrono">3:00</b><span data-en="Time">Temps</span></div>
+        <div><b id="score">0</b><span data-en="Points">Points</span></div>
+        <div><b id="compteur">0</b><span data-en="Words">Mots</span></div>
+        <button class="jm-bouton jm-bouton--discret" id="btn-terminer" data-en="Finish" hidden>
+          Terminer
+        </button>
+      </div>
+
+      <div class="zone">
+        <div id="grille" class="grille" role="group" aria-label="Letter grid"></div>
+
+        <div class="saisie-zone">
+          <div
+            id="saisie"
+            class="saisie saisie--vide"
+            data-invite="Formez un mot"
+            aria-live="polite"
+          ></div>
+          <div class="boutons-saisie">
+            <button
+              class="jm-bouton"
+              id="btn-effacer"
+              aria-label="Effacer la saisie"
+              data-en-aria="Clear"
+            >
+              ✕
+            </button>
+            <button class="jm-bouton jm-bouton--principal" id="btn-valider" data-en="Submit">
+              Valider
+            </button>
+          </div>
+        </div>
+
+        <div class="trouves">
+          <ul id="liste-mots" aria-label="Mots trouvés" data-en-aria="Words found"></ul>
+        </div>
+      </div>
+
+      <div class="depart" id="depart" hidden>
+        <div class="depart-carte">
+          <h2 data-en="Today’s grid">La grille du jour</h2>
+          <p
+            data-en="Three minutes to build as many <strong>English</strong> words as you can from letters that touch each other. Everyone plays the same grid today."
+          >
+            Trois minutes pour former le plus de mots <strong>anglais</strong> possible en reliant
+            des lettres qui se touchent. La grille est la même pour tout le monde aujourd’hui.
+          </p>
+          <button class="jm-bouton jm-bouton--principal" id="btn-commencer" data-en="Start">
+            Commencer
+          </button>
+          <label class="option">
+            <input type="checkbox" id="opt-libre" />
+            <span data-en="Free play, no timer">Mode libre, sans chrono</span>
+          </label>
+        </div>
+      </div>
+    </main>
+
+    <div id="chargement" class="jm-chargement">
+      <p data-en="Loading the dictionary…">Chargement du dictionnaire…</p>
+    </div>
+
+    <div id="erreur" class="jm-erreur" hidden></div>
+
+    <div class="jm-message" id="messages" aria-live="polite"></div>
+    <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+    <!-- Règles -->
+    <dialog class="jm-modale" id="modale-aide">
+      <div class="jm-modale-contenu">
+        <button
+          class="jm-bouton jm-bouton--icone jm-modale-fermer"
+          data-fermer
+          aria-label="Fermer"
+          data-en-aria="Close"
+        >
+          ✕
+        </button>
+        <h2 data-en="How to play">Règles</h2>
+
+        <h3 data-en="Building a word">Former un mot</h3>
+        <ul>
+          <li
+            data-en="Letters must <strong>touch each other</strong>: horizontally, vertically or diagonally."
+          >
+            Les lettres doivent <strong>se toucher</strong> : horizontalement, verticalement ou en
+            diagonale.
+          </li>
+          <li data-en="A square can only be used <strong>once</strong> in a given word.">
+            Une case ne peut servir <strong>qu’une seule fois</strong> dans un même mot.
+          </li>
+          <li data-en="<strong>Four letters minimum.</strong>">
+            <strong>4 lettres minimum.</strong>
+          </li>
+          <li
+            data-en="With a keyboard: type the word, then Enter. With a mouse or a finger: click the letters one by one, or drag across them."
+          >
+            Au clavier : tapez le mot puis Entrée. À la souris ou au doigt : cliquez les lettres
+            l’une après l’autre, ou faites glisser.
+          </li>
+        </ul>
+
+        <h3 data-en="Which words count">Mots acceptés</h3>
+        <ul>
+          <li data-en="<strong>English</strong> dictionary words, and those only.">
+            Les mots <strong>anglais</strong> du dictionnaire, et eux seuls.
+          </li>
+          <li
+            data-en="<strong>Every form counts</strong>: plurals, conjugations, participles. <em>walk</em>, <em>walks</em>, <em>walked</em> and <em>walking</em> are all valid."
+          >
+            <strong>Toutes les formes comptent</strong> : pluriels, conjugaisons, participes.
+            <em>walk</em>, <em>walks</em>, <em>walked</em> et <em>walking</em> sont tous valables.
+          </li>
+          <li data-en="No proper nouns.">Pas de noms propres.</li>
+        </ul>
+
+        <h3 data-en="Scoring">Points</h3>
+        <p
+          data-en="4 letters = 1 point · 5 = 2 · 6 = 3 · 7 = 5 · 8 or more = 11. Every grid hides at least one eight-letter word — find it."
+        >
+          4 lettres = 1 point · 5 = 2 · 6 = 3 · 7 = 5 · 8 et plus = 11. Chaque grille contient au
+          moins un mot de 8 lettres — à vous de le débusquer.
+        </p>
+
+        <h3 data-en="Today’s grid">La grille du jour</h3>
+        <p
+          data-en="It is derived from the date: everyone plays the same grid on the same day, and it changes at midnight. Nothing is sent over the Internet, your game stays on this device."
+        >
+          Elle est calculée à partir de la date : tout le monde joue la même grille le même jour,
+          et elle change à minuit. Rien n’est envoyé sur Internet, votre partie reste sur cet
+          appareil.
+        </p>
+
+        <p
+          class="jm-note"
+          data-en="Dictionary: ENABLE2K (Alan Beale), public domain — 173,528 English words, inflected forms included."
+        >
+          Dictionnaire : ENABLE2K (Alan Beale), domaine public — 173 528 mots anglais, toutes
+          formes fléchies incluses.
+        </p>
+      </div>
+    </dialog>
+
+    <!-- Fin de partie -->
+    <dialog class="jm-modale" id="modale-fin">
+      <div class="jm-modale-contenu">
+        <button
+          class="jm-bouton jm-bouton--icone jm-modale-fermer"
+          data-fermer
+          aria-label="Fermer"
+          data-en-aria="Close"
+        >
+          ✕
+        </button>
+        <h2 data-en="Game over">Fin de la partie</h2>
+
+        <div class="fin-chiffres">
+          <div><b id="fin-score">0</b><span data-en="Points">Points</span></div>
+          <div><b id="fin-mots">0</b><span data-en="Words found">Mots trouvés</span></div>
+          <div><b id="fin-record">0</b><span data-en="Best">Record</span></div>
+        </div>
+        <p class="jm-note" style="text-align: center">
+          <span data-en="Out of">Sur</span> <b id="fin-total">0</b>
+          <span data-en="possible words, worth">mots possibles, soit</span> <b id="fin-max">0</b>
+          <span data-en="points at most.">points au maximum.</span>
+        </p>
+
+        <h3 data-en="The longest ones you missed">Les plus longs que vous avez ratés</h3>
+        <ul class="restants" id="fin-restants"></ul>
+        <p style="text-align: center; margin: 10px 0 0">
+          <button class="jm-bouton jm-bouton--discret" id="btn-voir-tout" hidden></button>
+        </p>
+
+        <div class="fin-actions">
+          <button class="jm-bouton jm-bouton--principal" id="btn-partager" data-en="Copy my result">
+            Copier mon résultat
+          </button>
+          <a class="jm-bouton" href="../index.html" data-en="Other games">Les autres jeux</a>
+        </div>
+
+        <p class="ligne-boutons" style="margin-top: 18px; text-align: center">
+          <button class="jm-bouton jm-bouton--discret" id="btn-effacer-donnees" data-en="Erase my data">
+            Effacer mes données
+          </button>
+        </p>
+      </div>
+    </dialog>
+
+    <script src="../shared/seed.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/dico.js"></script>
+    <script src="../shared/grille.js"></script>
+    <script src="../shared/grille-ui.js"></script>
+    <script src="jeu.js"></script>
+  </body>
+</html>

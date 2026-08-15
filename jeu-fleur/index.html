@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Fleur de lettres</title>
+    <meta name="description" content="Sept lettres, une obligatoire, deux semaines pour tout trouver." />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/style-commun.css" />
+    <link rel="stylesheet" href="jeu.css" />
+  </head>
+  <body>
+    <header class="jm-entete">
+      <a class="jm-retour" href="../index.html">← Les jeux</a>
+      <h1>Fleur de lettres</h1>
+      <div class="jm-actions">
+        <button class="jm-bouton jm-bouton--icone" id="btn-aide" aria-label="Règles du jeu" title="Règles">?</button>
+        <button class="jm-bouton jm-bouton--icone" id="btn-progres" aria-label="Progression" title="Progression">▤</button>
+      </div>
+    </header>
+
+    <main id="jeu" hidden>
+      <!-- Rang et progression -->
+      <button class="rang" id="rang-barre" aria-label="Voir la progression">
+        <span class="rang-nom" id="rang-nom">Graine</span>
+        <span class="rang-piste"><span class="rang-jauge" id="rang-jauge"></span></span>
+        <span class="rang-score"><b id="score">0</b> pts</span>
+      </button>
+
+      <div class="zone">
+        <div class="colonne-jeu">
+          <div id="saisie" class="saisie saisie--vide" data-invite="Tapez ou cliquez les lettres" aria-live="polite"></div>
+
+          <div class="fleur" id="fleur" role="group" aria-label="Les sept lettres"></div>
+
+          <div class="commandes">
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la saisie">✕</button>
+            <button class="jm-bouton" id="btn-melanger" aria-label="Mélanger les lettres">⟳</button>
+            <button class="jm-bouton jm-bouton--principal" id="btn-valider">Entrer</button>
+          </div>
+        </div>
+
+        <div class="colonne-mots">
+          <p class="entete-mots">
+            <span><b id="compteur">0</b> <span id="libelle-mots">mot trouvé</span></span>
+            <span class="jm-note" id="periode-info"></span>
+          </p>
+          <ul id="liste-mots" aria-label="Mots trouvés"></ul>
+        </div>
+      </div>
+    </main>
+
+    <div id="chargement" class="jm-chargement">
+      <p>Chargement du dictionnaire…</p>
+    </div>
+
+    <div id="erreur" class="jm-erreur" hidden></div>
+
+    <div class="jm-message" id="messages" aria-live="polite"></div>
+    <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+    <!-- Règles -->
+    <dialog class="jm-modale" id="modale-aide">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Règles</h2>
+
+        <h3>Former un mot</h3>
+        <ul>
+          <li>La <strong>lettre du centre est obligatoire</strong> dans chaque mot.</li>
+          <li>Les autres lettres sont libres, et <strong>réutilisables autant de fois</strong> que vous voulez.</li>
+          <li>Entre <strong>4 et 9 lettres</strong>.</li>
+          <li>
+            Au clavier : tapez le mot puis Entrée. Sinon cliquez les lettres. Le bouton ⟳ mélange
+            l’affichage quand vous tournez en rond.
+          </li>
+        </ul>
+
+        <h3>Mots acceptés</h3>
+        <ul>
+          <li>Les mots au dictionnaire : noms, adjectifs, adverbes, et les verbes <strong>à l’infinitif</strong>.</li>
+          <li>
+            Les formes conjuguées sont <strong>refusées</strong>, comme les pluriels et les féminins :
+            <em>saler</em> compte, <em>salait</em> et <em>salés</em> non.
+          </li>
+          <li>Pas de noms propres.</li>
+          <li>Les accents ne se saisissent pas : tapez <em>elever</em>, le mot s’affichera accentué.</li>
+        </ul>
+
+        <h3>Points</h3>
+        <ul>
+          <li>Mot de 4 lettres : <strong>1 point</strong>.</li>
+          <li>Mot plus long : <strong>autant de points que de lettres</strong> (7 lettres = 7 points).</li>
+          <li>
+            <strong>Pangramme</strong> — un mot qui utilise les sept lettres :
+            <strong>+7 points bonus</strong>. Il y en a toujours au moins un.
+          </li>
+        </ul>
+
+        <h3>La fleur</h3>
+        <p>
+          Les sept lettres sont tirées pour <strong>deux semaines</strong> : la même fleur pour tout
+          le monde, du lundi au dimanche de la semaine suivante. Vos mots sont conservés sur cet
+          appareil pendant toute la période, rien n’est envoyé sur Internet.
+        </p>
+
+        <p class="jm-note">
+          Dictionnaire : Dicollecte / Grammalecte (Olivier R.), MPL 2.0 — 67 216 formes de base.
+        </p>
+      </div>
+    </dialog>
+
+    <!-- Progression -->
+    <dialog class="jm-modale" id="modale-progres">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Progression</h2>
+        <p id="progres-resume"></p>
+
+        <h3>Rangs</h3>
+        <ol class="rangs" id="liste-rangs"></ol>
+
+        <div class="fin-actions">
+          <button class="jm-bouton jm-bouton--principal" id="btn-partager">Copier mon résultat</button>
+        </div>
+
+        <p class="ligne-boutons">
+          <button class="jm-bouton jm-bouton--discret" id="btn-effacer-donnees">Effacer mes données</button>
+        </p>
+      </div>
+    </dialog>
+
+    <script src="../shared/seed.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/dico.js"></script>
+    <script src="jeu.js"></script>
+  </body>
+</html>

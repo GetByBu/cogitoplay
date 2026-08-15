@@ -1,0 +1,382 @@
+/* Jeu 3 — fleur de lettres : hexagones, barre de rang, liste des mots. */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Barre de rang ---------- */
+
+.rang {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: var(--fond-carte);
+  border: none;
+  border-bottom: 1px solid var(--bord);
+  cursor: pointer;
+}
+
+.rang-nom {
+  font-weight: 650;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.rang-piste {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--fond-doux);
+  overflow: hidden;
+}
+
+.rang-jauge {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+.rang-score {
+  font-size: 0.85rem;
+  color: var(--texte-doux);
+  white-space: nowrap;
+}
+
+.rang-score b {
+  font-family: var(--police-mots);
+  font-size: 1.05rem;
+  color: var(--texte);
+}
+
+/* ---------- Disposition ---------- */
+
+.zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 12px 24px;
+  min-height: 0;
+}
+
+.colonne-jeu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ---------- Saisie ---------- */
+
+.saisie {
+  min-height: 2.6rem;
+  display: grid;
+  place-items: center;
+  padding: 4px 12px;
+  font-family: var(--police-mots);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  word-break: break-all;
+  text-align: center;
+}
+
+.saisie--vide::before {
+  content: attr(data-invite);
+  font-family: var(--police);
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--texte-doux);
+}
+
+.saisie .centre {
+  color: var(--accent);
+}
+
+.saisie--refus {
+  animation: refus 0.4s ease;
+}
+
+@keyframes refus {
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+/* ---------- La fleur ---------- */
+
+.fleur {
+  --taille: min(84vw, 17rem);
+  --petale: 33%; /* largeur d'un hexagone, en pourcentage de la fleur */
+  --demi-haut: 14.3%; /* moitié de la hauteur d'un hexagone (0.866 × --petale) */
+  --ecart: 1.08; /* > 1 : écarte les pétales pour laisser respirer la fleur */
+  position: relative;
+  width: var(--taille);
+  aspect-ratio: 1;
+}
+
+.petale {
+  position: absolute;
+  width: var(--petale);
+  aspect-ratio: 1 / 0.866;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: inherit;
+  font-family: var(--police-mots);
+  font-size: clamp(1.1rem, 8vw, 1.9rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--texte);
+  background: var(--fond-doux);
+  border: none;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease, transform 0.08s ease;
+}
+
+.petale:hover {
+  background: var(--bord);
+}
+
+.petale:active,
+.petale--enfoncee {
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.petale--centre {
+  background: var(--accent);
+  color: #fff;
+}
+
+.petale--centre:hover {
+  background: var(--accent);
+  filter: brightness(1.08);
+}
+
+/* Une fleur d'hexagones plats : les six voisins à ±0,75 largeur et ±0,5 hauteur. */
+.petale[data-place='centre'] {
+  left: 50%;
+  top: 50%;
+}
+.petale[data-place='0'] {
+  left: 50%;
+  top: calc(50% - 2 * var(--demi-haut) * var(--ecart));
+}
+.petale[data-place='1'] {
+  left: calc(50% + 0.75 * var(--petale) * var(--ecart));
+  top: calc(50% - var(--demi-haut) * var(--ecart));
+}
+.petale[data-place='2'] {
+  left: calc(50% + 0.75 * var(--petale) * var(--ecart));
+  top: calc(50% + var(--demi-haut) * var(--ecart));
+}
+.petale[data-place='3'] {
+  left: 50%;
+  top: calc(50% + 2 * var(--demi-haut) * var(--ecart));
+}
+.petale[data-place='4'] {
+  left: calc(50% - 0.75 * var(--petale) * var(--ecart));
+  top: calc(50% + var(--demi-haut) * var(--ecart));
+}
+.petale[data-place='5'] {
+  left: calc(50% - 0.75 * var(--petale) * var(--ecart));
+  top: calc(50% - var(--demi-haut) * var(--ecart));
+}
+
+/* ---------- Commandes ---------- */
+
+.commandes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.commandes .jm-bouton {
+  min-width: 3rem;
+  height: 2.8rem;
+}
+
+/* ---------- Mots trouvés ---------- */
+
+.colonne-mots {
+  width: min(92vw, 26rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.entete-mots {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--bord);
+  padding-bottom: 6px;
+}
+
+#liste-mots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-content: flex-start;
+  overflow-y: auto;
+  max-height: 40vh;
+}
+
+.mot-trouve {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 3px 10px;
+  background: var(--fond-doux);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  animation: jm-apparition 0.2s ease;
+}
+
+.mot-trouve b {
+  font-size: 0.72rem;
+  color: var(--texte-doux);
+}
+
+.mot-trouve--pangramme {
+  background: var(--accent-doux);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  font-weight: 650;
+}
+
+.mot-trouve--pangramme b {
+  color: var(--accent);
+}
+
+/* ---------- Messages ---------- */
+
+.message--succes {
+  background: var(--etat-juste) !important;
+  color: #fff !important;
+}
+
+.message--pangramme {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+.message--refus {
+  background: var(--texte) !important;
+  color: var(--fond) !important;
+}
+
+/* ---------- Modale de progression ---------- */
+
+.rangs {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 3px;
+}
+
+.rangs li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: var(--rayon);
+  font-size: 0.9rem;
+}
+
+.rangs li span:last-child {
+  color: var(--texte-doux);
+  font-variant-numeric: tabular-nums;
+}
+
+.rangs .atteint {
+  background: var(--fond-doux);
+}
+
+.rangs .courant {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 650;
+}
+
+.rangs .courant span:last-child {
+  color: #fff;
+}
+
+.fin-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.ligne-boutons {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ---------- Écrans larges ---------- */
+
+@media (min-width: 780px) {
+  .zone {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 36px;
+    padding-top: 22px;
+  }
+  .fleur {
+    --taille: min(40vw, 21rem);
+  }
+  .colonne-mots {
+    width: min(26rem, 42vw);
+    margin-top: 4px;
+  }
+  #liste-mots {
+    max-height: 60vh;
+  }
+}
