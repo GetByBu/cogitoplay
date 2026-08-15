@@ -362,8 +362,8 @@
     if (etape.technique === 'nu') {
       return [
         `Une case de ${ou} n’accepte plus qu’un seul chiffre.`,
-        'Cette case : barrez tout ce qui figure déjà sur sa ligne, sa colonne et son bloc, ' +
-          'il n’en restera qu’un.',
+        'Barrez ce qui figure déjà sur sa ligne, sa colonne et son bloc : ' +
+          'il ne restera qu’un chiffre.',
       ];
     }
 

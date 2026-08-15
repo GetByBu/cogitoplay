@@ -82,6 +82,9 @@
     btnNotes: document.getElementById('btn-notes'),
     modaleAide: document.getElementById('modale-aide'),
     modaleFin: document.getElementById('modale-fin'),
+    bandeauIndice: document.getElementById('bandeau-indice'),
+    indiceTexte: document.getElementById('indice-texte'),
+    btnIndicePlus: document.getElementById('btn-indice-plus'),
   };
 
   // ------------------------------------------------- Générateur et solveur
@@ -284,6 +287,7 @@
     etat.perdu = false;
     etat.indice = null;
     etat.surbrillance = { unite: [], cases: [] };
+    cacherIndice();
 
     restaurer();
     construireGrille();
@@ -436,6 +440,15 @@
   document.getElementById('btn-effacer').addEventListener('click', effacer);
   el.btnNotes.addEventListener('click', basculerNotes);
   document.getElementById('btn-indice').addEventListener('click', donnerIndice);
+  el.btnIndicePlus.addEventListener('click', donnerIndice);
+
+  document.getElementById('btn-indice-fermer').addEventListener('click', function () {
+    // On garde l'indice en mémoire : le joueur l'a payé, la prochaine pression
+    // poursuivra le même raisonnement au lieu d'en ouvrir un autre.
+    cacherIndice();
+    etat.surbrillance = { unite: [], cases: [] };
+    dessiner();
+  });
 
   document.addEventListener('keydown', function (evenement) {
     if (evenement.ctrlKey || evenement.metaKey || evenement.altKey) return;
@@ -493,7 +506,10 @@
     etat.saisie[index] = chiffre;
     etat.notes[index] = [];
     // Le joueur a joué : l'indice affiché ne décrit plus la grille.
-    if (etat.indice && etat.indice.etape.cible === index) etat.indice = null;
+    if (etat.indice && etat.indice.etape.cible === index) {
+      etat.indice = null;
+      cacherIndice();
+    }
     etat.surbrillance = { unite: [], cases: [] };
     if (chiffre !== etat.solution[index]) {
       etat.erreurs++;
@@ -559,6 +575,34 @@
   }
 
   /**
+   * L'indice reste à l'écran : c'est une consigne, pas une notification. Il ne
+   * s'efface qu'une fois la case trouvée, ou si le joueur le renvoie.
+   */
+  function afficherIndice(texte, reste, libelleSuite) {
+    el.indiceTexte.innerHTML =
+      echapper(texte) +
+      '<span class="indice-reste">' +
+      (reste > 0
+        ? reste + ' indice' + (reste > 1 ? 's' : '') + ' restant' + (reste > 1 ? 's' : '')
+        : 'dernier indice du jour') +
+      '</span>';
+    el.btnIndicePlus.textContent = libelleSuite;
+    el.btnIndicePlus.hidden = reste === 0;
+    el.bandeauIndice.hidden = false;
+    el.annonce.textContent = texte;
+  }
+
+  function cacherIndice() {
+    el.bandeauIndice.hidden = true;
+  }
+
+  function echapper(texte) {
+    const div = document.createElement('div');
+    div.textContent = texte;
+    return div.innerHTML;
+  }
+
+  /**
    * Trois paliers sur la même déduction : où chercher, quel raisonnement mener,
    * puis seulement la réponse. Chaque pression coûte un indice — trois coups de
    * pouce, ou une réponse toute faite : au joueur de choisir.
@@ -603,16 +647,14 @@
 
     if (etat.indice.palier === 1) {
       etat.surbrillance = { unite: etape.unite, cases: [] };
-      message(phrases[0] + suffixe, 'indice');
-      el.annonce.textContent = phrases[0];
+      afficherIndice(phrases[0], reste, 'Plus précis');
     } else if (etat.indice.palier === 2) {
       // Le singleton nu ne veut rien dire sans sa case : on la montre.
       etat.surbrillance = {
         unite: etape.unite,
         cases: etape.technique === 'nu' ? [etape.cible] : etape.cases,
       };
-      message(phrases[1] + suffixe, 'indice');
-      el.annonce.textContent = phrases[1];
+      afficherIndice(phrases[1], reste, 'Révéler la case');
     } else {
       const chiffre = etape.chiffreCible || etape.chiffre;
       etat.saisie[etape.cible] = chiffre;
@@ -621,6 +663,7 @@
       etat.selection = etape.cible;
       etat.indice = null;
       etat.surbrillance = { unite: [], cases: [] };
+      cacherIndice();
       message('Case révélée' + suffixe, 'succes');
       dessiner();
       sauvegarder();

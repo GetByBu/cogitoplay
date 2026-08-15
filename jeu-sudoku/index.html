@@ -11,7 +11,7 @@
     <link rel="manifest" href="/cogitoplay/site.webmanifest" />
     <meta name="theme-color" content="#FBFAF7" />
     <link rel="stylesheet" href="../shared/style-commun.css?v=8" />
-    <link rel="stylesheet" href="jeu.css?v=13" />
+    <link rel="stylesheet" href="jeu.css?v=16" />
   </head>
   <body>
     <header class="jm-entete">
@@ -35,6 +35,14 @@
         <div><b id="restantes">81</b><span>À résoudre</span></div>
         <div><b id="erreurs">0</b><span>Erreurs</span></div>
         <button class="jm-bouton jm-bouton--discret" id="btn-recommencer">Recommencer</button>
+      </div>
+
+      <div class="bandeau-indice" id="bandeau-indice" hidden>
+        <p id="indice-texte"></p>
+        <div class="indice-actions">
+          <button class="jm-bouton" id="btn-indice-plus"></button>
+          <button class="jm-bouton jm-bouton--icone" id="btn-indice-fermer" aria-label="Fermer l’indice">✕</button>
+        </div>
       </div>
 
       <div class="zone">
@@ -95,8 +103,10 @@
           <li>
             Le bouton 💡 donne un <strong>indice progressif</strong>, sur le même raisonnement :
             la première pression indique <em>où chercher</em>, la deuxième <em>quel raisonnement
-            mener</em>, la troisième seulement remplit la case. Trois pressions par jour — trois
-            coups de pouce, ou une réponse toute faite, à vous de choisir.
+            mener</em>, la troisième seulement remplit la case. L’indice reste affiché tant que la
+            case n’est pas trouvée ; « Plus précis » passe au palier suivant, ✕ le renvoie sans
+            rien consommer. Trois pressions par jour — trois coups de pouce, ou une réponse toute
+            faite, à vous de choisir.
           </li>
         </ul>
 
@@ -145,9 +155,9 @@
     </dialog>
 
     <script src="../shared/seed.js?v=7"></script>
-    <script src="techniques.js?v=13"></script>
+    <script src="techniques.js?v=16"></script>
     <script src="../shared/message.js?v=7"></script>
     <script src="../shared/storage.js?v=7"></script>
-    <script src="jeu.js?v=14"></script>
+    <script src="jeu.js?v=16"></script>
   </body>
 </html>
