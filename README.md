@@ -1,7 +1,8 @@
-# Jeux de mots
+# CogitoPlay
 
 Quatre jeux de mots en HTML/CSS/JavaScript vanilla, sans framework, sans backend,
-sans appel réseau externe, sans cookie ni traceur.
+sans appel réseau externe, sans cookie ni traceur. En ligne sur
+<https://cogitoplay.com>.
 
 ## Lancer
 

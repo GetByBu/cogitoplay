@@ -37,7 +37,7 @@ JM.demarrerJeuGrille({
 
   textes: {
     fr: {
-      titre: 'Grille anglaise',
+      titre: 'Grille anglaise — CogitoPlay',
       tropCourt: '4 lettres minimum',
       dejaTrouve: 'Déjà trouvé',
       pasDansLaGrille: 'Ces lettres ne se touchent pas',
@@ -64,7 +64,7 @@ JM.demarrerJeuGrille({
     },
 
     en: {
-      titre: 'Letter Grid',
+      titre: 'Letter Grid — CogitoPlay',
       tropCourt: 'Four letters minimum',
       dejaTrouve: 'Already found',
       pasDansLaGrille: 'Those letters aren’t connected',
