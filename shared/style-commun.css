@@ -404,3 +404,20 @@ a {
   background: var(--texte);
   color: var(--fond);
 }
+
+/* ---------- Le sceau, à gauche du titre de l'accueil ---------- */
+
+.titre-sceau {
+  display: flex;
+  align-items: center;
+  gap: 0.42em;
+}
+
+/* Un peu plus haut que la capitale : le C est rond, il doit déborder
+   légèrement en haut et en bas pour paraître aligné avec le mot. */
+.sceau {
+  flex: none;
+  width: 0.92em;
+  height: 0.92em;
+  color: var(--accent);
+}

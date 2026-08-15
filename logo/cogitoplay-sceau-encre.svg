@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CogitoPlay">
+  <title>CogitoPlay</title>
+  <g transform="translate(-7,0)">
+    <path fill="#201D18" fill-rule="evenodd" d="M 413.60,132.87 A 200,200 0 1,0 413.60,379.13 L 348.99,328.65 A 118,118 0 1,1 348.99,183.35 Z"/>
+    <circle fill="#201D18" cx="415" cy="256" r="55"/>
+  </g>
+</svg>

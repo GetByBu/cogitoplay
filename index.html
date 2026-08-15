@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CogitoPlay</title>
     <meta name="description" content="Cinq jeux dans le navigateur : mot mystère, grilles de lettres, fleur de lettres, sudoku." />
-    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="shared/style-commun.css?v=7" />
+    <link rel="icon" href="/cogitoplay/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/cogitoplay/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/cogitoplay/apple-touch-icon.png" />
+    <link rel="manifest" href="/cogitoplay/site.webmanifest" />
+    <meta name="theme-color" content="#FBFAF7" />
+    <link rel="stylesheet" href="shared/style-commun.css?v=8" />
     <style>
       .accueil {
         max-width: 640px;
@@ -59,7 +63,19 @@
   </head>
   <body>
     <div class="accueil">
-      <h1>CogitoPlay</h1>
+      <h1 class="titre-sceau">
+        <svg class="sceau" viewBox="36 36 440 440" aria-hidden="true" focusable="false">
+          <g transform="translate(-7,0)">
+            <path
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M 413.60,132.87 A 200,200 0 1,0 413.60,379.13 L 348.99,328.65 A 118,118 0 1,1 348.99,183.35 Z"
+            />
+            <circle fill="currentColor" cx="415" cy="256" r="55" />
+          </g>
+        </svg>
+        CogitoPlay
+      </h1>
       <p class="jm-note">
         Cinq jeux. Aucun compte, aucune publicité, aucun suivi&#8239;: tout se passe dans
         votre navigateur.
