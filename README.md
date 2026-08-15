@@ -90,6 +90,10 @@ centrale et à vérifier que la récolte tient entre 30 et 250 mots.
   Chaque page est écrite dans sa langue — la grille anglaise est en anglais de
   bout en bout — et le jeu ne pioche que ses textes dynamiques dans
   `config.textes[langue]`.
+- `message.js` — un seul message transitoire à la fois (le suivant remplace le
+  précédent dans le même nœud, empilés ils recouvraient le compteur et la barre
+  de progression) et `JM.confirme()`, la confirmation en fenêtre modale maison.
+  Le site n'utilise plus aucune boîte système `confirm()`.
 - `progression.js` — barre de progression commune aux grilles et à la fleur :
   deux repères (une **cible** atteignable qui vaut victoire, le **maximum** que
   presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre

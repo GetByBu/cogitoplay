@@ -377,14 +377,8 @@
   }
 
   function message(texte, genre) {
-    const p = document.createElement('p');
-    p.className = 'message--' + genre;
-    p.textContent = texte;
-    el.messages.appendChild(p);
     const duree = genre === 'indice' ? 6000 : genre === 'pangramme' ? 2400 : 1400;
-    setTimeout(function () {
-      p.remove();
-    }, duree);
+    JM.message(el.messages, texte, { genre: genre, duree: duree });
   }
 
   // ------------------------------------------------------------- Progression
@@ -541,9 +535,16 @@
   });
 
   document.getElementById('btn-effacer-donnees').addEventListener('click', function () {
-    if (!confirm('Effacer les mots trouvés et vos préférences sur cet appareil ?')) return;
-    JM.storage.toutEffacer();
-    location.reload();
+    JM.confirme({
+      titre: 'Effacer vos données ?',
+      texte: 'Les mots trouvés et vos préférences seront supprimés de cet appareil.',
+      annuler: 'Annuler',
+      ok: 'Effacer',
+    }).then(function (accepte) {
+      if (!accepte) return;
+      JM.storage.toutEffacer();
+      location.reload();
+    });
   });
 
   document.getElementById('btn-partager').addEventListener('click', function () {

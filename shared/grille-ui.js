@@ -145,16 +145,23 @@
      */
     function suivreTaille() {
       const zone = document.querySelector('.zone');
+      const boutons = document.querySelector('.boutons-saisie');
+      const trouves = document.querySelector('.trouves');
+      const deuxColonnes = window.matchMedia('(min-width: 780px)');
       const ajuster = function () {
         // Mesuré depuis la fenêtre : la hauteur de `.zone` suit son contenu et
-        // ne dirait donc jamais à la grille de rétrécir.
+        // ne dirait donc jamais à la grille de rétrécir. On retire ce qui vit
+        // réellement sous la grille — en deux colonnes, la liste des mots est
+        // à côté et non dessous.
         const haut = el.grille.getBoundingClientRect().top;
-        const reserve = el.saisie.offsetHeight + 96; // saisie, boutons, un rang de mots
+        const sousLaGrille = deuxColonnes.matches ? 0 : trouves.offsetHeight + 12;
+        const reserve = boutons.offsetHeight + sousLaGrille + 26; // gouttière + marge basse
         el.grille.style.setProperty(
           '--hauteur-grille',
           Math.max(window.innerHeight - haut - reserve, 120) + 'px'
         );
       };
+      deuxColonnes.addEventListener('change', ajuster);
       if (typeof ResizeObserver === 'function') new ResizeObserver(ajuster).observe(zone);
       window.addEventListener('resize', ajuster);
       ajuster();
@@ -186,12 +193,42 @@
     /** Ajoute une case au chemin si elle touche la précédente et n'a pas servi. */
     function ajouterCase(index) {
       if (etat.chemin === null) etat.chemin = [];
-      if (etat.chemin.indexOf(index) !== -1) return;
+      if (etat.chemin.indexOf(index) !== -1) {
+        refuserCase(index, 'dejaUtilisee', T.caseDejaUtilisee);
+        return;
+      }
       const derniere = etat.chemin[etat.chemin.length - 1];
-      if (etat.chemin.length > 0 && JM.grille.VOISINS[derniere].indexOf(index) === -1) return;
+      if (etat.chemin.length > 0 && JM.grille.VOISINS[derniere].indexOf(index) === -1) {
+        refuserCase(index, 'pasVoisine', T.casePasVoisine);
+        return;
+      }
       etat.chemin.push(index);
       etat.motCourant += etat.lettres[index];
       afficherSaisie();
+    }
+
+    // Une règle qu'on n'a pas encore rencontrée s'explique une fois ; la
+    // répéter à chaque clic deviendrait vite pénible.
+    const reglesExpliquees = {};
+
+    /**
+     * Un clic refusé doit se voir : sans retour, le joueur croit à un bug de
+     * clic plutôt qu'à une règle du jeu.
+     */
+    function refuserCase(index, regle, texte) {
+      const bouton = cases[index];
+      bouton.classList.remove('case-grille--refus');
+      void bouton.offsetWidth; // relance l'animation
+      bouton.classList.add('case-grille--refus');
+      setTimeout(function () {
+        bouton.classList.remove('case-grille--refus');
+      }, 260);
+
+      if (!reglesExpliquees[regle]) {
+        reglesExpliquees[regle] = true;
+        message(texte, 'refus');
+        el.annonce.textContent = texte;
+      }
     }
 
     // ------------------------------------------------------- Saisie clavier
@@ -358,13 +395,7 @@
     }
 
     function message(texte, genre) {
-      const p = document.createElement('p');
-      p.className = 'message--' + genre;
-      p.textContent = texte;
-      el.messages.appendChild(p);
-      setTimeout(function () {
-        p.remove();
-      }, 1400);
+      JM.message(el.messages, texte, { genre: genre, duree: 1400 });
     }
 
     function majEntete() {
@@ -460,6 +491,10 @@
       const infos = progression.etat(etat.score, etat.scoreMax);
       const palier = (langue === 'en' ? JM.progression.PALIERS_EN : JM.progression.PALIERS_FR)[infos.palier];
       document.getElementById('fin-mot').textContent = palier.emoji + ' ' + palier.mot;
+
+      // « Reprendre » n'a de sens que si la partie n'était pas chronométrée :
+      // avec chrono, le temps est arrêté et la reprise fausserait le score.
+      document.getElementById('btn-reprendre').hidden = enCours || etat.chrono;
 
       if (enCours) {
         el.modaleFin.showModal();
@@ -582,7 +617,30 @@
     });
 
     document.getElementById('btn-terminer').addEventListener('click', function () {
-      if (!etat.termine && confirm(T.confirmerFin)) terminer();
+      if (etat.termine) return;
+      // Sans chrono, terminer ne coûte rien : l'écran de fin propose de
+      // reprendre. Une action réversible n'a pas à être confirmée.
+      if (!etat.chrono) {
+        terminer();
+        return;
+      }
+      // Avec chrono, en revanche, le temps s'arrête pour de bon.
+      JM.confirme({
+        titre: T.confirmerFinTitre,
+        texte: T.confirmerFinTexte,
+        annuler: T.continuer,
+        ok: T.voirResultat,
+      }).then(function (accepte) {
+        if (accepte) terminer();
+      });
+    });
+
+    /** Retour à la grille depuis l'écran de fin, en mode libre uniquement. */
+    document.getElementById('btn-reprendre').addEventListener('click', function () {
+      etat.termine = false;
+      el.btnTerminer.hidden = false;
+      el.modaleFin.close();
+      sauvegarder();
     });
 
     document.getElementById('btn-aide').addEventListener('click', function () {
@@ -618,9 +676,16 @@
     });
 
     document.getElementById('btn-effacer-donnees').addEventListener('click', function () {
-      if (!confirm(T.confirmerEffacement)) return;
-      JM.storage.toutEffacer();
-      location.reload();
+      JM.confirme({
+        titre: T.confirmerEffacementTitre,
+        texte: T.confirmerEffacement,
+        annuler: T.annuler,
+        ok: T.effacer,
+      }).then(function (accepte) {
+        if (!accepte) return;
+        JM.storage.toutEffacer();
+        location.reload();
+      });
     });
 
     function copier(texte) {

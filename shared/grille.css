@@ -426,8 +426,10 @@ main {
     grid-row: 1 / span 2;
     width: min(22rem, 42vw);
   }
+  /* La hauteur disponible compte ici aussi : sur un portable peu haut, une
+     grille pleine largeur poussait le bouton Valider sous le pli. */
   .grille {
-    width: 100%;
+    width: min(100%, var(--hauteur-grille, 22rem));
   }
   .trouves {
     grid-column: 2;
@@ -447,5 +449,20 @@ main {
   }
   .trouves-tout {
     display: none; /* tout est déjà visible */
+  }
+}
+
+/* Un clic refusé — case non voisine, ou déjà prise dans le mot en cours. */
+.case-grille--refus {
+  animation: case-refus 0.26s ease;
+  border-color: #c9452b;
+}
+
+@keyframes case-refus {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
   }
 }

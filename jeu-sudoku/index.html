@@ -6,8 +6,8 @@
     <title>Sudoku — CogitoPlay</title>
     <meta name="description" content="La grille de sudoku du jour, en trois niveaux." />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../shared/style-commun.css?v=4" />
-    <link rel="stylesheet" href="jeu.css?v=4" />
+    <link rel="stylesheet" href="../shared/style-commun.css?v=6" />
+    <link rel="stylesheet" href="jeu.css?v=6" />
   </head>
   <body>
     <header class="jm-entete">
@@ -28,7 +28,7 @@
 
       <div class="barre">
         <div><b id="chrono">0:00</b><span>Temps</span></div>
-        <div><b id="restantes">81</b><span>Cases</span></div>
+        <div><b id="restantes">81</b><span>À résoudre</span></div>
         <div><b id="erreurs">0</b><span>Erreurs</span></div>
         <button class="jm-bouton jm-bouton--discret" id="btn-recommencer">Recommencer</button>
       </div>
@@ -54,7 +54,7 @@
       <p>Préparation de la grille…</p>
     </div>
 
-    <div class="jm-message" id="messages" aria-live="polite"></div>
+    <div class="jm-message jm-message--bas" id="messages" aria-live="polite"></div>
     <p class="sr-only" id="annonce" aria-live="polite"></p>
 
     <!-- Règles -->
@@ -117,8 +117,9 @@
       </div>
     </dialog>
 
-    <script src="../shared/seed.js?v=4"></script>
-    <script src="../shared/storage.js?v=4"></script>
-    <script src="jeu.js?v=4"></script>
+    <script src="../shared/seed.js?v=6"></script>
+    <script src="../shared/message.js?v=6"></script>
+    <script src="../shared/storage.js?v=6"></script>
+    <script src="jeu.js?v=6"></script>
   </body>
 </html>

@@ -388,12 +388,7 @@
   }
 
   function message(texte, duree) {
-    const p = document.createElement('p');
-    p.textContent = texte;
-    el.messages.appendChild(p);
-    setTimeout(function () {
-      p.remove();
-    }, duree || 1800);
+    JM.message(el.messages, texte, { genre: 'neutre', duree: duree || 1800 });
   }
 
   // ------------------------------------------------------------ Fin de partie
@@ -600,9 +595,16 @@
   });
 
   document.getElementById('btn-effacer').addEventListener('click', function () {
-    if (!confirm('Effacer la partie en cours et toutes les statistiques de cet appareil ?')) return;
-    JM.storage.toutEffacer();
-    location.reload();
+    JM.confirme({
+      titre: 'Effacer vos données ?',
+      texte: 'La partie en cours et toutes vos statistiques seront supprimées de cet appareil.',
+      annuler: 'Annuler',
+      ok: 'Effacer',
+    }).then(function (accepte) {
+      if (!accepte) return;
+      JM.storage.toutEffacer();
+      location.reload();
+    });
   });
 
   // ---------------------------------------------------------------- Partage

@@ -309,8 +309,11 @@
   }
 
   function majEntete() {
+    // Cases restant à résoudre, et non cases vides : un chiffre faux laisse la
+    // case à faire, et le compteur doit tomber à zéro en même temps que la
+    // victoire, qui se juge elle aussi par rapport à la solution.
     let restantes = 0;
-    for (let i = 0; i < CASES; i++) if (etat.saisie[i] === 0) restantes++;
+    for (let i = 0; i < CASES; i++) if (etat.saisie[i] !== etat.solution[i]) restantes++;
     el.restantes.textContent = restantes;
     el.erreurs.textContent = etat.erreurs;
   }
@@ -608,9 +611,16 @@
   });
 
   document.getElementById('btn-recommencer').addEventListener('click', function () {
-    if (!confirm('Recommencer cette grille depuis le début ?')) return;
-    JM.storage.effacer(CLE_PARTIE);
-    demarrerNiveau(etat.niveau);
+    JM.confirme({
+      titre: 'Recommencer cette grille ?',
+      texte: 'Les chiffres posés, les notes et le chrono repartent de zéro.',
+      annuler: 'Annuler',
+      ok: 'Recommencer',
+    }).then(function (accepte) {
+      if (!accepte) return;
+      JM.storage.effacer(CLE_PARTIE);
+      demarrerNiveau(etat.niveau);
+    });
   });
 
   document.querySelectorAll('[data-fermer]').forEach(function (bouton) {
@@ -626,13 +636,7 @@
   });
 
   function message(texte, genre) {
-    const p = document.createElement('p');
-    p.className = 'message--' + genre;
-    p.textContent = texte;
-    el.messages.appendChild(p);
-    setTimeout(function () {
-      p.remove();
-    }, 1600);
+    JM.message(el.messages, texte, { genre: genre, duree: 1600 });
   }
 
   window.addEventListener('pagehide', function () {

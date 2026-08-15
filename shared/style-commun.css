@@ -383,3 +383,24 @@ a {
   font-size: 0.9rem;
   color: var(--texte);
 }
+
+.jm-modale-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+/* Messages ancrés en bas : sur les jeux dont le haut d'écran porte le score,
+   la barre de progression ou le compteur, un message flottant en haut venait
+   les recouvrir. */
+.jm-message--bas {
+  top: auto;
+  bottom: calc(5.2rem + env(safe-area-inset-bottom));
+}
+
+.message--neutre {
+  background: var(--texte);
+  color: var(--fond);
+}
