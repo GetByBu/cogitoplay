@@ -144,6 +144,10 @@
         vueCible.innerHTML = (textes.cible || 'cible') + ' <b>' + infos.cible + '</b>';
         vueMax.innerHTML = (textes.max || 'max') + ' <b>' + max + '</b>';
 
+        // Le libellé se cale sous le trait de la cible, sans déborder sur le
+        // score à gauche ni sur le maximum à droite.
+        vueCible.style.left = Math.min(84, Math.max(16, infos.partCible)) + '%';
+
         conteneur.setAttribute(
           'aria-label',
           `${score} ${textes.points || 'points'}, ${textes.cible || 'cible'} ${infos.cible}, ` +

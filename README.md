@@ -1,6 +1,6 @@
 # CogitoPlay
 
-Quatre jeux de mots en HTML/CSS/JavaScript vanilla, sans framework, sans backend,
+Cinq jeux en HTML/CSS/JavaScript vanilla, sans framework, sans backend,
 sans appel réseau externe, sans cookie ni traceur. En ligne sur
 <https://cogitoplay.com>.
 
@@ -53,6 +53,14 @@ dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
 | `jeu-grille/` | Grille de lettres | FR | quotidien | formes de base (67 k) |
 | `jeu-grille-en/` | Letter Grid | EN | quotidien | ENABLE2K (173 k) |
 | `jeu-fleur/` | Fleur de lettres | FR | 14 jours | formes de base (67 k) |
+| `jeu-sudoku/` | Sudoku | — | quotidien, 3 niveaux | aucun |
+
+Le sudoku suit la même règle que les jeux de mots : trois grilles par jour, une
+par niveau, tirées de la date. La grille est bâtie en remplissant d'abord une
+solution complète, puis en retirant des cases une à une — un retrait n'est gardé
+que si la grille conserve **une seule** solution, vérifiée par dénombrement. Le
+joueur n'a donc jamais à deviner. Comptez 3 ms de génération en facile, 27 ms en
+difficile.
 
 La fleur garantit son pangramme de la même façon que les grilles garantissent
 leur mot long : on ne tire pas sept lettres en espérant qu'un mot les utilise
@@ -79,10 +87,9 @@ centrale et à vérifier que la récolte tient entre 30 et 250 mots.
   construction plutôt que par tirages successifs.
 - `grille-ui.js` — interface commune aux deux grilles ; chaque jeu se réduit à
   un fichier de configuration (dictionnaire, fréquences, contraintes, textes).
-  L'interface est traduisible : les textes fixes portent un attribut `data-en`
-  dans le HTML, les textes dynamiques viennent de `config.textes[langue]`. Le
-  jeu anglais offre les deux langues (bouton FR/EN dans l'en-tête, choix
-  mémorisé) ; les jeux français ne déclarent que le français.
+  Chaque page est écrite dans sa langue — la grille anglaise est en anglais de
+  bout en bout — et le jeu ne pioche que ses textes dynamiques dans
+  `config.textes[langue]`.
 - `progression.js` — barre de progression commune aux grilles et à la fleur :
   deux repères (une **cible** atteignable qui vaut victoire, le **maximum** que
   presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre
@@ -103,6 +110,9 @@ Uniquement dans le `localStorage` du navigateur, sous le préfixe `jm.` :
 | `jm.grille-fr.v1.stats`, `jm.grille-en.v1.stats` | parties jouées, meilleur score |
 | `jm.fleur.v1` | quinzaine en cours : mots trouvés et score |
 | `jm.fleur.indices.v1` | indices utilisés dans la journée (trois maximum) |
+| `jm.sudoku.v1` | grille du jour : niveau, chiffres posés, notes, temps, erreurs |
+| `jm.sudoku.stats.v1` | parties terminées et meilleur temps par niveau |
+| `jm.sudoku.indices.v1` | indices utilisés dans la journée (trois maximum) |
 | `jm.prefs.v1` | palette de couleurs et langue d'interface choisies |
 
 Aucun identifiant, aucune donnée personnelle, rien ne sort de l'appareil. Le

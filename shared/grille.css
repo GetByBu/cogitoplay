@@ -218,21 +218,43 @@ main {
 
 /* ---------- Liste des mots trouvés ---------- */
 
+/* Sur mobile la place verticale est comptée : les mots défilent sur une seule
+   ligne, du plus récent au plus ancien, et le bouton du bout ouvre la liste
+   complète. Sur écran large, la colonne de droite les affiche tous. */
 .trouves {
-  width: min(92vw, 26rem);
-  flex: 1;
-  min-height: 4rem;
-  overflow-y: auto;
+  width: min(96vw, 30rem);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .trouves ul {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 2px 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
-  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.trouves ul::-webkit-scrollbar {
+  display: none;
+}
+
+.mot-trouve {
+  flex: none;
+}
+
+.trouves-tout {
+  flex: none;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--bord);
+  white-space: nowrap;
 }
 
 .mot-trouve {
@@ -331,6 +353,12 @@ main {
 
 /* ---------- Écran de fin ---------- */
 
+.fin-mot {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
 .fin-chiffres {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -405,10 +433,19 @@ main {
     grid-column: 2;
     grid-row: 1 / span 3;
     align-self: start;
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
     max-height: 62vh;
   }
   .trouves ul {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    overflow-y: auto;
     justify-content: flex-start;
+    align-content: flex-start;
+  }
+  .trouves-tout {
+    display: none; /* tout est déjà visible */
   }
 }

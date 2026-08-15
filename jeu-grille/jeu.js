@@ -47,6 +47,9 @@ JM.demarrerJeuGrille({
       copieRatee: 'Copie impossible',
       invite: 'Formez un mot',
       sansChrono: 'sans chrono',
+      enCours: 'Où vous en êtes',
+      finPartie: 'Fin de la partie',
+      vosMots: 'Vos mots',
       caseAria: function (lettre, ligne, colonne) {
         return `${lettre}, ligne ${ligne}, colonne ${colonne}`;
       },

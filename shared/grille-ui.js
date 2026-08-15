@@ -31,15 +31,15 @@
       modaleAide: document.getElementById('modale-aide'),
       modaleFin: document.getElementById('modale-fin'),
       btnTerminer: document.getElementById('btn-terminer'),
+      btnListe: document.getElementById('btn-liste'),
+      listeNombre: document.getElementById('btn-liste-nombre'),
+      modaleMots: document.getElementById('modale-mots'),
     };
 
-    // Langue de l'interface. Un jeu peut n'en proposer qu'une (les jeux
-    // français) ou laisser le joueur basculer (le jeu anglais).
-    const languesOffertes = config.languesOffertes || [config.langue];
-    let langue = config.langue;
-    const preferee = JM.prefs.lire().langueInterface;
-    if (preferee && languesOffertes.indexOf(preferee) !== -1) langue = preferee;
-    let T = config.textes[langue];
+    // Chaque page est écrite dans sa langue ; le jeu ne fait que piocher les
+    // textes dynamiques correspondants.
+    const langue = config.langue;
+    const T = config.textes[langue];
 
     const etat = {
       lettres: [],
@@ -93,7 +93,7 @@
         });
 
         construireGrille();
-        appliquerLangue(langue);
+        appliquerTextes();
         el.chargement.hidden = true;
         el.jeu.hidden = false;
         suivreTaille();
@@ -105,61 +105,16 @@
         el.erreur.textContent = JM.messageErreurDico(erreur);
       });
 
-    // ----------------------------------------------------------- Traduction
-
-    /**
-     * Bascule l'interface. Les textes fixes portent un attribut data-en dans le
-     * HTML (leur version française d'origine est mémorisée au premier passage) ;
-     * les textes dynamiques viennent de config.textes[langue].
-     */
-    function appliquerLangue(nouvelle) {
-      langue = nouvelle;
-      T = config.textes[langue];
+    /** Textes et libellés qui ne vivent pas dans le HTML. */
+    function appliquerTextes() {
       document.documentElement.lang = langue;
       if (T.titre) document.title = T.titre;
-
-      document.querySelectorAll('[data-en]').forEach(function (noeud) {
-        if (noeud.dataset.fr === undefined) noeud.dataset.fr = noeud.innerHTML;
-        noeud.innerHTML = langue === 'en' ? noeud.dataset.en : noeud.dataset.fr;
-      });
-      document.querySelectorAll('[data-en-aria]').forEach(function (noeud) {
-        if (noeud.dataset.frAria === undefined) {
-          noeud.dataset.frAria = noeud.getAttribute('aria-label') || '';
-        }
-        noeud.setAttribute(
-          'aria-label',
-          langue === 'en' ? noeud.dataset.enAria : noeud.dataset.frAria
-        );
-      });
-
       el.saisieMot.dataset.invite = T.invite;
       progression.configurer({
         paliers: langue === 'en' ? JM.progression.PALIERS_EN : JM.progression.PALIERS_FR,
         textes: T.progression,
       });
       majEntete();
-      if (etat.lettres.length) afficherSaisie(); // le compteur de mots aussi est traduit
-      cases.forEach(function (bouton, index) {
-        bouton.setAttribute(
-          'aria-label',
-          T.caseAria(etat.lettres[index], Math.floor(index / JM.grille.COTE) + 1, (index % JM.grille.COTE) + 1)
-        );
-      });
-
-      const bascule = document.getElementById('btn-langue');
-      if (bascule) {
-        const autre = languesOffertes.find(function (l) {
-          return l !== langue;
-        });
-        bascule.textContent = autre.toUpperCase();
-        bascule.setAttribute('aria-label', T.basculeLangue);
-      }
-
-      const prefs = JM.prefs.lire();
-      prefs.langueInterface = langue;
-      JM.prefs.ecrire(prefs);
-
-      if (el.modaleFin.open) ouvrirFin(); // réaffiche l'écran de fin traduit
     }
 
     // ---------------------------------------------------------- Construction
@@ -204,8 +159,6 @@
       window.addEventListener('resize', ajuster);
       ajuster();
     }
-
-    appliquerLangue(langue);
 
     // ------------------------------------------------------- Saisie tactile
 
@@ -417,6 +370,24 @@
     function majEntete() {
       el.compteur.textContent = etat.motsTrouves.length;
       progression.maj(etat.score, etat.scoreMax);
+      el.btnListe.hidden = etat.motsTrouves.length === 0;
+      el.listeNombre.textContent = etat.motsTrouves.length;
+    }
+
+    /** La liste complète des mots trouvés, du plus long au plus court. */
+    function ouvrirMots() {
+      const tries = etat.motsTrouves.slice().sort(function (a, b) {
+        return b.length - a.length || a.localeCompare(b);
+      });
+      document.getElementById('mots-titre').textContent = T.vosMots;
+      document.getElementById('mots-liste').innerHTML = tries
+        .map(function (mot) {
+          return (
+            '<li>' + echapper(JM.graphie(etat.dico, mot)) + ' <b>+' + JM.grille.points(mot) + '</b></li>'
+          );
+        })
+        .join('');
+      el.modaleMots.showModal();
     }
 
     // ---------------------------------------------------------------- Chrono
@@ -461,7 +432,7 @@
       ouvrirFin();
     }
 
-    function ouvrirFin() {
+    function ouvrirFin(enCours) {
       const restants = [];
       etat.solution.forEach(function (mot) {
         if (etat.motsTrouves.indexOf(mot) === -1) restants.push(mot);
@@ -472,6 +443,12 @@
         scoreMax += JM.grille.points(mot);
       });
 
+      // En cours de partie, on montre où en est le joueur sans lui dévoiler
+      // les mots qui lui manquent : ce serait lui gâcher la fin.
+      document.getElementById('fin-titre').textContent = enCours ? T.enCours : T.finPartie;
+      document.getElementById('fin-restants-bloc').hidden = !!enCours;
+      document.getElementById('btn-partager').hidden = !!enCours;
+
       document.getElementById('fin-score').textContent = etat.score;
       document.getElementById('fin-max').textContent = scoreMax;
       document.getElementById('fin-mots').textContent = etat.motsTrouves.length;
@@ -479,6 +456,15 @@
 
       const stats = lireStats();
       document.getElementById('fin-record').textContent = Math.max(stats.meilleur, etat.score);
+
+      const infos = progression.etat(etat.score, etat.scoreMax);
+      const palier = (langue === 'en' ? JM.progression.PALIERS_EN : JM.progression.PALIERS_FR)[infos.palier];
+      document.getElementById('fin-mot').textContent = palier.emoji + ' ' + palier.mot;
+
+      if (enCours) {
+        el.modaleFin.showModal();
+        return;
+      }
 
       // Les listes de mots ne sont pas triées par fréquence : afficher les
       // dizaines de mots ratés d'un coup noierait les trouvailles intéressantes
@@ -599,24 +585,12 @@
       if (!etat.termine && confirm(T.confirmerFin)) terminer();
     });
 
-    const btnLangue = document.getElementById('btn-langue');
-    if (btnLangue) {
-      btnLangue.addEventListener('click', function () {
-        appliquerLangue(
-          languesOffertes.find(function (l) {
-            return l !== langue;
-          })
-        );
-      });
-    }
-
     document.getElementById('btn-aide').addEventListener('click', function () {
       el.modaleAide.showModal();
     });
 
     document.getElementById('btn-resultats').addEventListener('click', function () {
-      if (etat.termine) ouvrirFin();
-      else el.modaleAide.showModal();
+      ouvrirFin(!etat.termine);
     });
 
     document.querySelectorAll('[data-fermer]').forEach(function (bouton) {
@@ -625,7 +599,9 @@
       });
     });
 
-    [el.modaleAide, el.modaleFin].forEach(function (modale) {
+    el.btnListe.addEventListener('click', ouvrirMots);
+
+    [el.modaleAide, el.modaleFin, el.modaleMots].forEach(function (modale) {
       modale.addEventListener('click', function (evenement) {
         if (evenement.target === modale) modale.close();
       });

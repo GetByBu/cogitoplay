@@ -362,12 +362,20 @@ a {
 }
 
 .progression-chiffres {
+  position: relative;
   display: flex;
   justify-content: space-between;
   gap: 10px;
   margin: 0;
   font-size: 0.75rem;
   color: var(--texte-doux);
+}
+
+/* Positionné sur la même abscisse que le trait de la piste. */
+.progression-cible {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .progression-chiffres b {

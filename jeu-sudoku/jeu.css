@@ -1,0 +1,321 @@
+/* Jeu 5 — sudoku : grille 9×9, pavé de chiffres, notes. */
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Niveaux ---------- */
+
+.niveaux {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  padding: 10px 12px 0;
+}
+
+.niveau {
+  flex: 1 1 0;
+  max-width: 8rem;
+  padding: 7px 10px;
+  font-size: 0.9rem;
+}
+
+.niveau--actif {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 650;
+}
+
+.niveau--actif:hover {
+  background: var(--accent);
+  filter: brightness(1.05);
+}
+
+/* ---------- Bandeau ---------- */
+
+.barre {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 8px;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid var(--bord);
+}
+
+.barre div {
+  text-align: center;
+}
+
+.barre b {
+  display: block;
+  font-family: var(--police-mots);
+  font-size: 1.3rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.barre span {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texte-doux);
+}
+
+/* ---------- Grille ---------- */
+
+.zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 10px 24px;
+  min-height: 0;
+}
+
+.grille-sudoku {
+  --taille: min(94vw, 26rem, var(--hauteur-grille, 26rem));
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  width: var(--taille);
+  aspect-ratio: 1;
+  border: 2px solid var(--bord-fort);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--fond-carte);
+  container-type: inline-size;
+}
+
+.case-sudoku {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: inherit;
+  font-family: var(--police-mots);
+  font-size: min(6cqw, 1.5rem);
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  border-radius: 0;
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+}
+
+.case-sudoku.bord-gauche {
+  border-left: 2px solid var(--bord-fort);
+}
+
+.case-sudoku.bord-haut {
+  border-top: 2px solid var(--bord-fort);
+}
+
+/* Les chiffres de départ, posés par la grille : plus sombres, plus lourds. */
+.case-sudoku.donnee {
+  color: var(--texte);
+  font-weight: 700;
+}
+
+.case-sudoku.voisine {
+  background: var(--fond-doux);
+}
+
+.case-sudoku.meme-chiffre {
+  background: var(--accent-doux);
+}
+
+.case-sudoku.selectionnee {
+  background: var(--accent);
+  color: #fff;
+}
+
+.case-sudoku.fausse {
+  color: #c9452b;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+.case-sudoku.selectionnee.fausse {
+  color: #ffd9d2;
+}
+
+/* Les notes : trois par trois dans la case. */
+.case-sudoku.avec-notes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-content: center;
+  font-size: min(2.6cqw, 0.62rem);
+  font-weight: 500;
+  color: var(--texte-doux);
+  line-height: 1.05;
+}
+
+.case-sudoku.avec-notes span {
+  display: block;
+}
+
+/* ---------- Pavé de chiffres ---------- */
+
+.commandes-sudoku {
+  width: min(94vw, 26rem);
+  display: grid;
+  gap: 10px;
+}
+
+.pave {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 4px;
+}
+
+.touche-chiffre {
+  position: relative;
+  aspect-ratio: 1 / 1.25;
+  padding: 0;
+  font: inherit;
+  font-family: var(--police-mots);
+  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  font-weight: 700;
+  color: var(--texte);
+  background: var(--fond-doux);
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.touche-chiffre:active {
+  filter: brightness(0.93);
+}
+
+/* Combien de fois ce chiffre reste à poser. */
+.reste {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--texte-doux);
+}
+
+.touche-chiffre--finie {
+  opacity: 0.4;
+}
+
+.outils {
+  display: flex;
+  gap: 8px;
+}
+
+.outils .jm-bouton {
+  flex: 1 1 0;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.outils .jm-bouton.actif {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 650;
+}
+
+.bouton-libelle {
+  font-size: 0.9rem;
+}
+
+/* ---------- Messages et fin ---------- */
+
+.message--succes {
+  background: var(--etat-juste) !important;
+  color: #fff !important;
+}
+
+.message--refus {
+  background: var(--texte) !important;
+  color: var(--fond) !important;
+}
+
+.fin-mot {
+  margin: 6px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.fin-chiffres {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 4px;
+  text-align: center;
+}
+
+.fin-chiffres b {
+  display: block;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.fin-chiffres span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--texte-doux);
+}
+
+.fin-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* ---------- Écrans larges : grille à gauche, pavé à droite ---------- */
+
+@media (min-width: 820px) {
+  .zone {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+  }
+  .commandes-sudoku {
+    width: 15rem;
+    align-content: start;
+  }
+  .pave {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .touche-chiffre {
+    aspect-ratio: 1;
+    font-size: 1.5rem;
+  }
+}

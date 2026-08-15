@@ -47,6 +47,9 @@
 
         <div class="trouves">
           <ul id="liste-mots" aria-label="Mots trouvés"></ul>
+          <button class="jm-bouton jm-bouton--discret trouves-tout" id="btn-liste" hidden>
+            <span id="btn-liste-nombre">0</span> ▸
+          </button>
         </div>
       </div>
 
@@ -132,11 +135,21 @@
       </div>
     </dialog>
 
+    <!-- Liste complète des mots trouvés -->
+    <dialog class="jm-modale" id="modale-mots">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2 id="mots-titre">Vos mots</h2>
+        <ul class="restants" id="mots-liste"></ul>
+      </div>
+    </dialog>
+
     <!-- Fin de partie -->
     <dialog class="jm-modale" id="modale-fin">
       <div class="jm-modale-contenu">
         <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
-        <h2>Fin de la partie</h2>
+        <h2 id="fin-titre">Fin de la partie</h2>
+        <p class="fin-mot" id="fin-mot"></p>
 
         <div class="fin-chiffres">
           <div><b id="fin-score">0</b><span>Points</span></div>
@@ -147,11 +160,13 @@
           Sur <b id="fin-total">0</b> mots possibles, soit <b id="fin-max">0</b> points au maximum.
         </p>
 
-        <h3>Les plus longs que vous avez ratés</h3>
-        <ul class="restants" id="fin-restants"></ul>
-        <p style="text-align: center; margin: 10px 0 0">
-          <button class="jm-bouton jm-bouton--discret" id="btn-voir-tout" hidden></button>
-        </p>
+        <div id="fin-restants-bloc">
+          <h3>Les plus longs que vous avez ratés</h3>
+          <ul class="restants" id="fin-restants"></ul>
+          <p style="text-align: center; margin: 10px 0 0">
+            <button class="jm-bouton jm-bouton--discret" id="btn-voir-tout" hidden></button>
+          </p>
+        </div>
 
         <div class="fin-actions">
           <button class="jm-bouton jm-bouton--principal" id="btn-partager">Copier mon résultat</button>

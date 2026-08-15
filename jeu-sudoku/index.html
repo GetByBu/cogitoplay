@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sudoku — CogitoPlay</title>
+    <meta name="description" content="La grille de sudoku du jour, en trois niveaux." />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../shared/style-commun.css?v=2" />
+    <link rel="stylesheet" href="jeu.css?v=2" />
+  </head>
+  <body>
+    <header class="jm-entete">
+      <a class="jm-retour" href="../index.html">← Les jeux</a>
+      <h1>Sudoku</h1>
+      <div class="jm-actions">
+        <button class="jm-bouton jm-bouton--icone" id="btn-indice" aria-label="Demander un indice" title="Indice">💡</button>
+        <button class="jm-bouton jm-bouton--icone" id="btn-aide" aria-label="Règles du jeu" title="Règles">?</button>
+      </div>
+    </header>
+
+    <main id="jeu" hidden>
+      <div class="niveaux" id="niveaux" role="group" aria-label="Niveau">
+        <button class="jm-bouton niveau" data-niveau="facile">Facile</button>
+        <button class="jm-bouton niveau" data-niveau="moyen">Moyen</button>
+        <button class="jm-bouton niveau" data-niveau="difficile">Difficile</button>
+      </div>
+
+      <div class="barre">
+        <div><b id="chrono">0:00</b><span>Temps</span></div>
+        <div><b id="restantes">81</b><span>Cases</span></div>
+        <div><b id="erreurs">0</b><span>Erreurs</span></div>
+        <button class="jm-bouton jm-bouton--discret" id="btn-recommencer">Recommencer</button>
+      </div>
+
+      <div class="zone">
+        <div id="grille" class="grille-sudoku" role="group" aria-label="Grille de sudoku"></div>
+
+        <div class="commandes-sudoku">
+          <div id="pave" class="pave" role="group" aria-label="Chiffres"></div>
+          <div class="outils">
+            <button class="jm-bouton" id="btn-notes" aria-pressed="false">
+              ✎ <span class="bouton-libelle">Notes</span>
+            </button>
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la case">
+              ⌫ <span class="bouton-libelle">Effacer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="chargement" class="jm-chargement">
+      <p>Préparation de la grille…</p>
+    </div>
+
+    <div class="jm-message" id="messages" aria-live="polite"></div>
+    <p class="sr-only" id="annonce" aria-live="polite"></p>
+
+    <!-- Règles -->
+    <dialog class="jm-modale" id="modale-aide">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Règles</h2>
+
+        <h3>Le principe</h3>
+        <p>
+          Remplissez la grille pour que chaque <strong>ligne</strong>, chaque <strong>colonne</strong>
+          et chacun des neuf <strong>blocs</strong> contienne les chiffres de 1 à 9, une seule fois
+          chacun.
+        </p>
+
+        <h3>Jouer</h3>
+        <ul>
+          <li>Touchez une case, puis un chiffre du pavé. Au clavier : les touches 1 à 9, ⌫ pour effacer, les flèches pour se déplacer.</li>
+          <li>
+            <strong>✎ Notes</strong> écrit de petits chiffres dans un coin pour noter les
+            possibilités. Poser un chiffre pour de bon efface les notes correspondantes de sa ligne,
+            sa colonne et son bloc.
+          </li>
+          <li>
+            Un chiffre faux s’affiche en rouge et compte une erreur — libre à vous de le laisser ou
+            de le corriger.
+          </li>
+          <li>Le bouton 💡 dévoile une case. Trois indices par jour.</li>
+        </ul>
+
+        <h3>La grille du jour</h3>
+        <p>
+          Trois grilles par jour, une par niveau, calculées à partir de la date : tout le monde joue
+          les mêmes. Chacune n’a qu’<strong>une seule solution</strong>, vérifiée à la génération —
+          vous n’aurez jamais à deviner. Votre partie est conservée sur cet appareil, rien n’est
+          envoyé sur Internet.
+        </p>
+      </div>
+    </dialog>
+
+    <!-- Victoire -->
+    <dialog class="jm-modale" id="modale-fin">
+      <div class="jm-modale-contenu">
+        <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
+        <h2>Grille terminée</h2>
+        <p class="fin-mot" id="fin-mot"></p>
+
+        <div class="fin-chiffres">
+          <div><b id="fin-temps">—</b><span>Temps</span></div>
+          <div><b id="fin-erreurs">0</b><span>Erreurs</span></div>
+          <div><b id="fin-record">—</b><span>Record</span></div>
+        </div>
+        <p class="jm-note" style="text-align: center">
+          Niveau <b id="fin-niveau">—</b>
+        </p>
+
+        <div class="fin-actions">
+          <a class="jm-bouton jm-bouton--principal" href="../index.html">Les autres jeux</a>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="../shared/seed.js?v=2"></script>
+    <script src="../shared/storage.js?v=2"></script>
+    <script src="jeu.js?v=2"></script>
+  </body>
+</html>

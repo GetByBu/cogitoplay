@@ -1,10 +1,9 @@
 /*
- * Jeu 4 — Grille de lettres quotidienne (anglais).
+ * Jeu 4 — Grille de lettres quotidienne, tout en anglais.
  *
  * Même moteur et même interface que la grille française ; changent seulement la
  * langue du dictionnaire, les fréquences de lettres, la contrainte de
- * génération — et le fait que l'interface elle-même se met en anglais si le
- * joueur le demande (bouton FR/EN dans l'en-tête).
+ * génération, et les textes — la page est en anglais de bout en bout.
  *
  * Dictionnaire : ENABLE2K, qui contient nativement toutes les formes fléchies.
  * Aucune restriction grammaticale ici, contrairement à la version française.
@@ -34,44 +33,13 @@ JM.demarrerJeuGrille({
 
   partCible: 0.3,
 
-  langue: 'fr',
-  languesOffertes: ['fr', 'en'],
-
+  langue: 'en',
   textes: {
-    fr: {
-      titre: 'Grille anglaise — CogitoPlay',
-      tropCourt: '4 lettres minimum',
-      dejaTrouve: 'Déjà trouvé',
-      pasDansLaGrille: 'Ces lettres ne se touchent pas',
-      pasAuDictionnaire: 'Pas au dictionnaire anglais',
-      confirmerFin: 'Terminer la partie maintenant ?',
-      confirmerEffacement: 'Effacer la partie en cours et vos scores sur cet appareil ?',
-      copie: 'Résultat copié',
-      copieRatee: 'Copie impossible',
-      invite: 'Formez un mot',
-      sansChrono: 'sans chrono',
-      basculeLangue: 'Switch to English',
-      caseAria: function (lettre, ligne, colonne) {
-        return `${lettre}, ligne ${ligne}, colonne ${colonne}`;
-      },
-      annonceMot: function (mot, points) {
-        return `${mot}, ${points} point${points > 1 ? 's' : ''}.`;
-      },
-      voirTout: function (nombre) {
-        return `Voir les ${nombre} autres`;
-      },
-      motsPossibles: function (nombre) {
-        if (nombre === 0) return 'aucun mot à trouver ainsi';
-        return nombre === 1 ? '1 mot possible' : `${nombre} mots possibles`;
-      },
-      progression: { cible: 'cible', max: 'max', points: 'pts' },
-      partage: function (numero, score, mots, total) {
-        return `Grille anglaise n°${numero} — ${score} points, ${mots} mots sur ${total}`;
-      },
-    },
-
     en: {
       titre: 'Letter Grid — CogitoPlay',
+      enCours: 'Where you stand',
+      finPartie: 'Game over',
+      vosMots: 'Your words',
       tropCourt: 'Four letters minimum',
       dejaTrouve: 'Already found',
       pasDansLaGrille: 'Those letters aren’t connected',
@@ -82,7 +50,6 @@ JM.demarrerJeuGrille({
       copieRatee: 'Copying failed',
       invite: 'Build a word',
       sansChrono: 'no timer',
-      basculeLangue: 'Passer en français',
       caseAria: function (lettre, ligne, colonne) {
         return `${lettre}, row ${ligne}, column ${colonne}`;
       },
