@@ -39,7 +39,7 @@ mais garde l'ancien JavaScript en cache, et la page casse. Une seule commande
 suffit :
 
 ```bash
-sed -i '' 's/?v=2/?v=3/g' index.html jeu-*/index.html
+sed -i '' 's/?v=6/?v=7/g' index.html jeu-*/index.html
 ```
 
 GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
@@ -66,7 +66,9 @@ La fleur garantit son pangramme de la même façon que les grilles garantissent
 leur mot long : on ne tire pas sept lettres en espérant qu'un mot les utilise
 toutes, on part d'un mot du dictionnaire qui compte exactement sept lettres
 distinctes, et ses lettres deviennent la fleur. Reste à choisir la lettre
-centrale et à vérifier que la récolte tient entre 30 et 250 mots.
+centrale et à vérifier que la récolte tient entre 40 et 350 mots. La lettre S est
+exclue de la fleur : depuis que les pluriels comptent, elle rendrait la moitié
+des trouvailles automatiques.
 
 ## Code partagé (`shared/`)
 
