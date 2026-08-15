@@ -2,7 +2,7 @@
  * Jeu 3 — Fleur de lettres (français, partie de deux semaines).
  *
  * Sept lettres, celle du centre obligatoire, réutilisables à volonté, mots de 4
- * à 9 lettres, dictionnaire des formes de base (pas de conjugaisons).
+ * à 9 lettres, formes de base plus féminins et pluriels (pas de conjugaisons).
  *
  * Le pangramme est garanti par construction : on ne tire pas sept lettres au
  * hasard en espérant qu'un mot les utilise toutes, on part d'un mot qui compte
@@ -14,7 +14,7 @@
 
   // ---------------------------------------------------------------- Réglages
 
-  const DICO = 'fr_lemmes_base_67k.txt';
+  const DICO = 'fr_base_accords.txt';
   const LONGUEUR_MIN = 4;
   const LONGUEUR_MAX = 9;
 
@@ -23,8 +23,8 @@
   // 4 jours pour que chaque période commence un lundi.
   const DECALAGE_LUNDI = 4;
 
-  const MOTS_MIN = 30; // en dessous, deux semaines seraient vite épuisées
-  const MOTS_MAX = 250; // au dessus, la liste devient un inventaire
+  const MOTS_MIN = 40; // en dessous, deux semaines seraient vite épuisées
+  const MOTS_MAX = 350; // au dessus, la liste devient un inventaire
 
   const BONUS_PANGRAMME = 7;
   const CLE_STOCKAGE = 'fleur.v1';
@@ -141,10 +141,13 @@
   }
 
   function genererFleur(cle, index) {
-    // Candidats : les mots à exactement 7 lettres distinctes. Chacun d'eux est
-    // un pangramme pour la fleur formée de ses propres lettres.
+    // Candidats : les mots à exactement 7 lettres distinctes, aucune n'étant un
+    // S. Depuis que les pluriels comptent, une fleur contenant un S se jouerait
+    // en ajoutant un S à tout ce qu'on trouve — et si le S était au centre,
+    // le jeu se réduirait à ça.
+    const bitS = 1 << ('s'.charCodeAt(0) - CODE_A);
     const pangrammes = index.mots.filter(function (mot, i) {
-      return compterBits(index.masques[i]) === 7;
+      return compterBits(index.masques[i]) === 7 && (index.masques[i] & bitS) === 0;
     });
 
     for (let essai = 1; essai <= 40; essai++) {

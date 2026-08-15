@@ -71,6 +71,13 @@ veux, ou une liste de mots interdits).
   jour du jeu « mot mystère » ; la validation des propositions du joueur, elle,
   continue d'utiliser le dictionnaire complet.
 
-Ce fichier est un extrait modifié du dictionnaire Dicollecte : il reste donc
-sous **MPL 2.0**, comme le fichier dont il est issu. Le code des jeux n'est pas
+- `fr_base_accords.txt` — 152 136 mots : les 67 216 formes de base, augmentées
+  des féminins et des pluriels reconstruits par règle depuis chaque lemme et
+  vérifiés un à un contre la liste des 469 007 formes fléchies. Les conjugaisons
+  en sont exclues. Produit par `outils/derive-accords.py`, qui se relance à
+  volonté. Sert aux jeux qui refusent les conjugaisons : grille française et
+  fleur de lettres.
+
+Ces fichiers sont des extraits modifiés du dictionnaire Dicollecte : ils restent
+donc sous **MPL 2.0**, comme le fichier dont ils sont issus. Le code des jeux n'est pas
 concerné par cette obligation.

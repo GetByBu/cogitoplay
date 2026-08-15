@@ -5,13 +5,13 @@
  * fichier ne contient que ce qui distingue la version française de la version
  * anglaise.
  *
- * Dictionnaire : formes de base uniquement (fr_lemmes_base_67k). Les
- * conjugaisons sont donc refusées, conformément aux règles du jeu.
+ * Dictionnaire : fr_base_accords, c'est-à-dire les formes de base augmentées
+ * des féminins et des pluriels. Les conjugaisons restent refusées.
  */
 JM.demarrerJeuGrille({
   cleJeu: 'grille-fr',
   cleStockage: 'grille-fr.v1',
-  dico: 'fr_lemmes_base_67k.txt',
+  dico: 'fr_base_accords.txt',
   duree: 180, // 3 minutes
 
   // Fréquence de chaque lettre dans les mots du dictionnaire français, pour

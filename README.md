@@ -50,9 +50,9 @@ dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
 | Dossier | Jeu | Langue | Rythme | Dictionnaire |
 |---|---|---|---|---|
 | `jeu-mot/` | Mot mystère | FR | quotidien | formes fléchies (469 k) pour les propositions, sélection de 1 629 mots courants pour le tirage |
-| `jeu-grille/` | Grille de lettres | FR | quotidien | formes de base (67 k) |
+| `jeu-grille/` | Grille de lettres | FR | quotidien | base + accords (152 k) |
 | `jeu-grille-en/` | Letter Grid | EN | quotidien | ENABLE2K (173 k) |
-| `jeu-fleur/` | Fleur de lettres | FR | 14 jours | formes de base (67 k) |
+| `jeu-fleur/` | Fleur de lettres | FR | 14 jours | base + accords (152 k) |
 | `jeu-sudoku/` | Sudoku | — | quotidien, 3 niveaux | aucun |
 
 Le sudoku suit la même règle que les jeux de mots : trois grilles par jour, une
@@ -121,8 +121,18 @@ bouton « effacer mes données » de chaque jeu supprime toutes les clés `jm.`.
 ## Dictionnaires
 
 Voir `shared/dictionnaires/LICENCES_ET_SOURCES.md`. Les trois fichiers d'origine
-sont utilisés tels quels ; s'y ajoute `fr_solutions_5.txt`, extrait sélectionné à
-la main de la liste française (et donc MPL 2.0 lui aussi).
+sont utilisés tels quels ; s'y ajoutent deux fichiers dérivés, MPL 2.0 eux aussi :
+`fr_solutions_5.txt` (sélection à la main des mots courants de 5 lettres) et
+`fr_base_accords.txt` (formes de base + féminins et pluriels, sans les
+conjugaisons), reconstruit par `outils/derive-accords.py`.
+
+Le dictionnaire source ne distingue pas « féminin » de « conjugué » : ce sont
+deux formes fléchies, et les marqueurs grammaticaux ont été retirés des fichiers.
+Les accords sont donc reconstruits par règle depuis chaque lemme (`+e`, `+s`,
+`-eux → -euse`, `-teur → -trice`, `-al → -aux`…), puis chaque candidat n'est
+retenu que s'il existe dans la liste des 469 007 formes. Un garde-fou écarte les
+dérivations en `-e` quand le verbe en `-er` correspondant existe : « chant » +
+« e » donnerait « chante », qui est une conjugaison et non un féminin.
 
 - Français : Dicollecte / Grammalecte (Olivier R.), **MPL 2.0**.
 - Anglais : ENABLE2K (Alan Beale), **domaine public**.
