@@ -17,12 +17,30 @@
   const BLOC = 3;
   const CASES = 81;
 
-  // `erreursMax` à null : autant d'erreurs qu'on veut. Sinon, la partie est
-  // perdue à la énième — c'est ce qui donne du poids aux niveaux difficiles.
+  /*
+   * Un niveau n'est pas un nombre de cases vides, c'est un type de
+   * raisonnement. `techniques` dit ce que la grille a le droit d'exiger,
+   * `plancher` ce qu'elle doit exiger de plus que le niveau inférieur — sans
+   * lui, « difficile » ne voudrait dire que « plus long ».
+   *
+   * `erreursMax` à null : autant d'erreurs qu'on veut.
+   */
   const NIVEAUX = {
-    facile: { trous: 36, nom: 'Facile', erreursMax: null },
-    moyen: { trous: 46, nom: 'Moyen', erreursMax: 5 },
-    difficile: { trous: 54, nom: 'Difficile', erreursMax: 3 },
+    facile: { trous: 36, nom: 'Facile', erreursMax: null, techniques: ['nu'], plancher: null },
+    moyen: {
+      trous: 46,
+      nom: 'Moyen',
+      erreursMax: 5,
+      techniques: ['nu', 'cache'],
+      plancher: ['nu'],
+    },
+    difficile: {
+      trous: 54,
+      nom: 'Difficile',
+      erreursMax: 3,
+      techniques: ['nu', 'cache', 'paires'],
+      plancher: ['nu', 'cache'],
+    },
   };
 
   const CLE_PARTIE = 'sudoku.v1';
@@ -46,6 +64,8 @@
     minuterie: null,
     termine: false,
     perdu: false,
+    indice: null, // { etape, palier } : l'aide en cours, de plus en plus précise
+    surbrillance: { unite: [], cases: [] },
   };
 
   const el = {
@@ -113,25 +133,55 @@
     return false;
   }
 
-  /** Compte les solutions, en s'arrêtant à `limite` : deux suffisent à trancher. */
+  /**
+   * Compte les solutions, en s'arrêtant à `limite` : deux suffisent à trancher.
+   *
+   * On explore toujours la case la plus contrainte plutôt que la première
+   * venue. Chaque nœud coûte un peu plus cher à choisir, mais l'arbre exploré
+   * est sans commune mesure : c'est la différence entre une grille fabriquée en
+   * quelques millisecondes et une seconde d'attente.
+   */
   function compterSolutions(grille, limite) {
     let compte = 0;
     const travail = grille.slice();
 
     function explorer() {
       if (compte >= limite) return;
-      const index = travail.indexOf(0);
-      if (index === -1) {
+
+      let meilleure = -1;
+      let meilleurMasque = 0;
+      let moins = 10;
+
+      for (let i = 0; i < CASES; i++) {
+        if (travail[i] !== 0) continue;
+        let masque = 0;
+        let combien = 0;
+        for (let valeur = 1; valeur <= 9; valeur++) {
+          if (placementValide(travail, i, valeur)) {
+            masque |= 1 << valeur;
+            combien++;
+          }
+        }
+        if (combien === 0) return; // case sans candidat : cette branche est morte
+        if (combien < moins) {
+          moins = combien;
+          meilleure = i;
+          meilleurMasque = masque;
+          if (combien === 1) break;
+        }
+      }
+
+      if (meilleure === -1) {
         compte++;
         return;
       }
+
       for (let valeur = 1; valeur <= 9; valeur++) {
-        if (placementValide(travail, index, valeur)) {
-          travail[index] = valeur;
-          explorer();
-          travail[index] = 0;
-          if (compte >= limite) return;
-        }
+        if (!(meilleurMasque >> valeur & 1)) continue;
+        travail[meilleure] = valeur;
+        explorer();
+        travail[meilleure] = 0;
+        if (compte >= limite) return;
       }
     }
 
@@ -139,30 +189,59 @@
     return compte;
   }
 
-  function genererGrille(cle, trous) {
-    const rng = JM.rng(cle);
-    const solution = grilleVide();
-    remplir(solution, rng);
+  /**
+   * La grille du jour pour ce niveau, avec deux garanties vérifiées à chaque
+   * retrait : la solution reste unique, et la grille reste **déductible** avec
+   * les seules techniques du niveau. La seconde est celle qui compte pour le
+   * joueur — une grille à solution unique peut n'être finissable qu'en pariant
+   * au hasard, ce qu'aucun indice ne saurait expliquer.
+   *
+   * Reste à vérifier qu'elle **exige** bien la technique de son niveau : si
+   * celles du niveau inférieur suffisent, on retire et on recommence avec une
+   * clé dérivée, déterministe donc identique pour tous les joueurs.
+   */
+  function genererGrille(cle, reglages) {
+    let reserve = null;
+    for (let essai = 1; essai <= 40; essai++) {
+      const rng = JM.rng(essai === 1 ? cle : cle + '#' + essai);
+      const solution = grilleVide();
+      remplir(solution, rng);
 
-    const depart = solution.slice();
-    const ordre = melange(
-      Array.from({ length: CASES }, function (_, i) {
-        return i;
-      }),
-      rng
-    );
+      const depart = solution.slice();
+      const ordre = melange(
+        Array.from({ length: CASES }, function (_, i) {
+          return i;
+        }),
+        rng
+      );
 
-    let retires = 0;
-    for (let i = 0; i < ordre.length && retires < trous; i++) {
-      const index = ordre[i];
-      const memoire = depart[index];
-      depart[index] = 0;
-      // Un retrait n'est gardé que si la grille garde une solution unique.
-      if (compterSolutions(depart, 2) !== 1) depart[index] = memoire;
-      else retires++;
+      let retires = 0;
+      for (let i = 0; i < ordre.length && retires < reglages.trous; i++) {
+        const index = ordre[i];
+        const memoire = depart[index];
+        depart[index] = 0;
+        if (compterSolutions(depart, 2) === 1 && JM.sudoku.resoudre(depart, reglages.techniques)) {
+          retires++;
+        } else {
+          depart[index] = memoire;
+        }
+      }
+
+      // Quelques cases de moins qu'espéré restent acceptables ; une grille trop
+      // remplie, non.
+      if (retires < reglages.trous - 4) continue;
+
+      // Trop facile pour son niveau : les techniques d'en dessous suffisent.
+      // On garde tout de même la première venue en réserve — mieux vaut une
+      // grille un peu tendre qu'un écran d'erreur si le tirage s'acharne.
+      if (reglages.plancher && JM.sudoku.resoudre(depart, reglages.plancher)) {
+        if (!reserve) reserve = { depart: depart, solution: solution };
+        continue;
+      }
+
+      return { depart: depart, solution: solution };
     }
-
-    return { depart: depart, solution: solution };
+    return reserve;
   }
 
   // --------------------------------------------------------------- Démarrage
@@ -190,7 +269,8 @@
     etat.niveau = niveau;
     arreterChrono();
 
-    const grille = genererGrille(`sudoku:${niveau}:${JM.dateISO()}`, NIVEAUX[niveau].trous);
+    const grille = genererGrille(`sudoku:${niveau}:${JM.dateISO()}`, NIVEAUX[niveau]);
+    if (!grille) throw new Error('génération impossible au niveau ' + niveau);
     etat.depart = grille.depart;
     etat.solution = grille.solution;
     etat.saisie = grille.depart.slice();
@@ -202,6 +282,8 @@
     etat.secondes = 0;
     etat.termine = false;
     etat.perdu = false;
+    etat.indice = null;
+    etat.surbrillance = { unite: [], cases: [] };
 
     restaurer();
     construireGrille();
@@ -264,6 +346,9 @@
 
       if (donnee) bouton.classList.add('donnee');
       if (valeur !== 0 && !donnee && valeur !== etat.solution[i]) bouton.classList.add('fausse');
+
+      if (etat.surbrillance.unite.indexOf(i) !== -1) bouton.classList.add('indice-region');
+      if (etat.surbrillance.cases.indexOf(i) !== -1) bouton.classList.add('indice-case');
 
       if (selection !== null) {
         const ls = Math.floor(selection / COTE);
@@ -407,6 +492,9 @@
 
     etat.saisie[index] = chiffre;
     etat.notes[index] = [];
+    // Le joueur a joué : l'indice affiché ne décrit plus la grille.
+    if (etat.indice && etat.indice.etape.cible === index) etat.indice = null;
+    etat.surbrillance = { unite: [], cases: [] };
     if (chiffre !== etat.solution[index]) {
       etat.erreurs++;
       el.annonce.textContent = 'Chiffre incorrect.';
@@ -470,6 +558,11 @@
     return brut;
   }
 
+  /**
+   * Trois paliers sur la même déduction : où chercher, quel raisonnement mener,
+   * puis seulement la réponse. Chaque pression coûte un indice — trois coups de
+   * pouce, ou une réponse toute faite : au joueur de choisir.
+   */
   function donnerIndice() {
     if (etat.termine) return;
     const compteur = lireIndices();
@@ -478,35 +571,64 @@
       return;
     }
 
-    // La case sélectionnée si elle est vide ou fausse, sinon une case au hasard.
-    let cible = null;
-    if (etat.selection !== null && etat.saisie[etat.selection] !== etat.solution[etat.selection]) {
-      cible = etat.selection;
-    } else {
-      const candidates = [];
-      for (let i = 0; i < CASES; i++) {
-        if (etat.saisie[i] !== etat.solution[i]) candidates.push(i);
+    // Le raisonnement se mène sur la grille telle qu'elle devrait être : un
+    // chiffre faux du joueur fausserait tous les candidats.
+    const propre = etat.saisie.map(function (valeur, i) {
+      return valeur === etat.solution[i] ? valeur : 0;
+    });
+
+    const enCoursValide =
+      etat.indice && etat.saisie[etat.indice.etape.cible] !== etat.solution[etat.indice.etape.cible];
+
+    if (!enCoursValide) {
+      const etape = JM.sudoku.prochaineEtape(propre, NIVEAUX[etat.niveau].techniques);
+      if (!etape) {
+        // Ne devrait pas arriver : la grille est fabriquée pour rester
+        // déductible. On le dit plutôt que de faire semblant.
+        message('Aucun raisonnement simple ici', 'refus');
+        return;
       }
-      if (candidates.length === 0) return;
-      cible = candidates[Math.floor(Math.random() * candidates.length)];
+      etat.indice = { etape: etape, palier: 0 };
     }
 
-    etat.saisie[cible] = etat.solution[cible];
-    etat.notes[cible] = [];
-    nettoyerNotes(cible, etat.solution[cible]);
-    etat.selection = cible;
-
+    etat.indice.palier += 1;
     compteur.utilises += 1;
     JM.storage.ecrire(CLE_INDICES, compteur);
+
+    const etape = etat.indice.etape;
+    const phrases = JM.sudoku.formuler(etape);
     const reste = INDICES_PAR_JOUR - compteur.utilises;
-    message(
-      `Case révélée · ${reste} indice${reste > 1 ? 's' : ''} restant${reste > 1 ? 's' : ''}`,
-      'succes'
-    );
+    const suffixe =
+      reste > 0 ? ` · ${reste} indice${reste > 1 ? 's' : ''} restant${reste > 1 ? 's' : ''}` : '';
+
+    if (etat.indice.palier === 1) {
+      etat.surbrillance = { unite: etape.unite, cases: [] };
+      message(phrases[0] + suffixe, 'indice');
+      el.annonce.textContent = phrases[0];
+    } else if (etat.indice.palier === 2) {
+      // Le singleton nu ne veut rien dire sans sa case : on la montre.
+      etat.surbrillance = {
+        unite: etape.unite,
+        cases: etape.technique === 'nu' ? [etape.cible] : etape.cases,
+      };
+      message(phrases[1] + suffixe, 'indice');
+      el.annonce.textContent = phrases[1];
+    } else {
+      const chiffre = etape.chiffreCible || etape.chiffre;
+      etat.saisie[etape.cible] = chiffre;
+      etat.notes[etape.cible] = [];
+      nettoyerNotes(etape.cible, chiffre);
+      etat.selection = etape.cible;
+      etat.indice = null;
+      etat.surbrillance = { unite: [], cases: [] };
+      message('Case révélée' + suffixe, 'succes');
+      dessiner();
+      sauvegarder();
+      verifierVictoire();
+      return;
+    }
 
     dessiner();
-    sauvegarder();
-    verifierVictoire();
   }
 
   // ---------------------------------------------------------------- Chrono
@@ -604,6 +726,10 @@
     JM.storage.ecrire(CLE_PARTIE, {
       jour: etat.numeroJour,
       niveau: etat.niveau,
+      // La grille de départ est enregistrée avec la partie : si le générateur
+      // change, une sauvegarde de la veille ne doit pas se recoller sur une
+      // grille différente.
+      depart: etat.depart.join(''),
       saisie: etat.saisie.join(''),
       notes: etat.notes.map(function (n) {
         return n.join('');
@@ -621,9 +747,11 @@
       !partie ||
       partie.jour !== etat.numeroJour ||
       partie.niveau !== etat.niveau ||
+      partie.depart !== etat.depart.join('') ||
       !partie.saisie ||
       partie.saisie.length !== CASES
     ) {
+      JM.storage.effacer(CLE_PARTIE);
       return;
     }
     etat.saisie = partie.saisie.split('').map(Number);

@@ -71,8 +71,23 @@ Le sudoku suit la même règle que les jeux de mots : trois grilles par jour, un
 par niveau, tirées de la date. La grille est bâtie en remplissant d'abord une
 solution complète, puis en retirant des cases une à une — un retrait n'est gardé
 que si la grille conserve **une seule** solution, vérifiée par dénombrement. Le
-joueur n'a donc jamais à deviner. Comptez 3 ms de génération en facile, 27 ms en
-difficile.
+joueur n'a donc jamais à deviner. Comptez 2 ms de génération en facile, 14 ms en
+moyen, 90 ms en difficile — ce dernier écarte en moyenne une quinzaine de
+grilles trop tendres avant d'en retenir une.
+
+Un niveau n'est pas un nombre de cases vides mais **un type de raisonnement**.
+`jeu-sudoku/techniques.js` connaît quatre techniques — singleton nu, singleton
+caché, paire nue, paire pointante — et sait les *nommer*. Ce même répertoire
+sert aux deux bouts : la fabrication ne retire une case que si la grille reste
+déductible avec les techniques du niveau, et l'indice s'en sert pour dire quel
+raisonnement mener. Un plancher garantit en plus que la grille **exige** la
+technique de son niveau, sans quoi « difficile » ne voudrait dire que « plus
+long » : mesuré avant ce garde-fou, aucune grille difficile n'exigeait mieux
+que la technique la plus élémentaire.
+
+L'indice est **progressif** : première pression, où chercher ; deuxième, quel
+raisonnement mener ; troisième seulement, la case se remplit. Trois pressions
+par jour — trois coups de pouce, ou une réponse toute faite.
 
 Le nombre d'erreurs permises dépend du niveau : illimité en facile, **cinq** en
 moyen, **trois** en difficile. À la dernière, la partie est perdue et la grille
