@@ -222,10 +222,19 @@
     const debut = jourEnDate(DECALAGE_LUNDI + etat.periode * JOURS_PAR_PERIODE);
     const fin = jourEnDate(DECALAGE_LUNDI + (etat.periode + 1) * JOURS_PAR_PERIODE - 1);
     const restant = DECALAGE_LUNDI + (etat.periode + 1) * JOURS_PAR_PERIODE - JM.numeroJour();
-    const format = { day: 'numeric', month: 'long' };
+
+    // « du 3 au 16 août » quand le mois ne change pas, sinon les deux mois.
+    const memeMois = debut.getMonth() === fin.getMonth();
+    const jourSeul = { day: 'numeric' };
+    const jourEtMois = { day: 'numeric', month: 'long' };
+    const periode =
+      'du ' +
+      debut.toLocaleDateString('fr-FR', memeMois ? jourSeul : jourEtMois) +
+      ' au ' +
+      fin.toLocaleDateString('fr-FR', jourEtMois);
+
     el.periodeInfo.textContent =
-      `du ${debut.toLocaleDateString('fr-FR', format)} au ${fin.toLocaleDateString('fr-FR', format)}` +
-      ` · ${restant} jour${restant > 1 ? 's' : ''}`;
+      `${periode} · ${restant} jour${restant > 1 ? 's' : ''} restant${restant > 1 ? 's' : ''}`;
   }
 
   function jourEnDate(numero) {
