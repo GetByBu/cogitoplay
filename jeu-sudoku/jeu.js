@@ -17,10 +17,12 @@
   const BLOC = 3;
   const CASES = 81;
 
+  // `erreursMax` à null : autant d'erreurs qu'on veut. Sinon, la partie est
+  // perdue à la énième — c'est ce qui donne du poids aux niveaux difficiles.
   const NIVEAUX = {
-    facile: { trous: 36, nom: 'Facile' },
-    moyen: { trous: 46, nom: 'Moyen' },
-    difficile: { trous: 54, nom: 'Difficile' },
+    facile: { trous: 36, nom: 'Facile', erreursMax: null },
+    moyen: { trous: 46, nom: 'Moyen', erreursMax: 5 },
+    difficile: { trous: 54, nom: 'Difficile', erreursMax: 3 },
   };
 
   const CLE_PARTIE = 'sudoku.v1';
@@ -43,6 +45,7 @@
     secondes: 0,
     minuterie: null,
     termine: false,
+    perdu: false,
   };
 
   const el = {
@@ -198,6 +201,7 @@
     etat.erreurs = 0;
     etat.secondes = 0;
     etat.termine = false;
+    etat.perdu = false;
 
     restaurer();
     construireGrille();
@@ -315,7 +319,11 @@
     let restantes = 0;
     for (let i = 0; i < CASES; i++) if (etat.saisie[i] !== etat.solution[i]) restantes++;
     el.restantes.textContent = restantes;
-    el.erreurs.textContent = etat.erreurs;
+
+    const plafond = NIVEAUX[etat.niveau].erreursMax;
+    el.erreurs.textContent = plafond ? etat.erreurs + ' / ' + plafond : etat.erreurs;
+    // Rouge à la dernière erreur permise, pour prévenir avant la sanction.
+    el.erreurs.classList.toggle('erreurs--critique', !!plafond && etat.erreurs >= plafond - 1);
   }
 
   function majNiveaux() {
@@ -402,6 +410,16 @@
     if (chiffre !== etat.solution[index]) {
       etat.erreurs++;
       el.annonce.textContent = 'Chiffre incorrect.';
+      const plafond = NIVEAUX[etat.niveau].erreursMax;
+      if (plafond && etat.erreurs >= plafond) {
+        dessiner();
+        perdre();
+        return;
+      }
+      const reste = plafond ? plafond - etat.erreurs : 0;
+      if (plafond && reste <= 2) {
+        message(reste === 1 ? 'Plus qu’une erreur permise' : reste + ' erreurs permises', 'refus');
+      }
     } else {
       nettoyerNotes(index, chiffre);
     }
@@ -516,6 +534,14 @@
 
   // ------------------------------------------------------------- Victoire
 
+  function perdre() {
+    etat.termine = true;
+    etat.perdu = true;
+    arreterChrono();
+    sauvegarder();
+    setTimeout(ouvrirFin, 400);
+  }
+
   function verifierVictoire() {
     for (let i = 0; i < CASES; i++) {
       if (etat.saisie[i] !== etat.solution[i]) return;
@@ -529,13 +555,26 @@
 
   function ouvrirFin() {
     const stats = lireStats();
+    const plafond = NIVEAUX[etat.niveau].erreursMax;
+
     document.getElementById('fin-niveau').textContent = NIVEAUX[etat.niveau].nom;
     document.getElementById('fin-temps').textContent = formatDuree(etat.secondes);
-    document.getElementById('fin-erreurs').textContent = etat.erreurs;
+    document.getElementById('fin-erreurs').textContent = plafond
+      ? etat.erreurs + ' / ' + plafond
+      : etat.erreurs;
     const record = stats.records[etat.niveau];
     document.getElementById('fin-record').textContent = record ? formatDuree(record) : '—';
-    document.getElementById('fin-mot').textContent =
-      etat.erreurs === 0 ? '🏆 Sans faute, chapeau.' : '🎉 Grille résolue.';
+
+    document.getElementById('fin-titre').textContent = etat.perdu
+      ? 'Trop d’erreurs'
+      : 'Grille terminée';
+    document.getElementById('fin-mot').textContent = etat.perdu
+      ? `💥 ${plafond} erreurs au niveau ${NIVEAUX[etat.niveau].nom.toLowerCase()}, la grille est perdue.`
+      : etat.erreurs === 0
+      ? '🏆 Sans faute, chapeau.'
+      : '🎉 Grille résolue.';
+    document.getElementById('btn-rejouer').hidden = !etat.perdu;
+
     el.modaleFin.showModal();
   }
 
@@ -572,6 +611,7 @@
       erreurs: etat.erreurs,
       secondes: etat.secondes,
       termine: etat.termine,
+      perdu: etat.perdu,
     });
   }
 
@@ -595,6 +635,7 @@
     etat.erreurs = partie.erreurs || 0;
     etat.secondes = partie.secondes || 0;
     etat.termine = !!partie.termine;
+    etat.perdu = !!partie.perdu;
     if (etat.termine) setTimeout(ouvrirFin, 300);
   }
 
@@ -604,6 +645,12 @@
     const bouton = evenement.target.closest('[data-niveau]');
     if (!bouton || bouton.dataset.niveau === etat.niveau) return;
     demarrerNiveau(bouton.dataset.niveau);
+  });
+
+  document.getElementById('btn-rejouer').addEventListener('click', function () {
+    el.modaleFin.close();
+    JM.storage.effacer(CLE_PARTIE);
+    demarrerNiveau(etat.niveau);
   });
 
   document.getElementById('btn-aide').addEventListener('click', function () {

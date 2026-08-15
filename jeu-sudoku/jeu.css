@@ -37,8 +37,18 @@ main {
 .niveau {
   flex: 1 1 0;
   max-width: 8rem;
-  padding: 7px 10px;
+  padding: 5px 8px;
   font-size: 0.9rem;
+  line-height: 1.15;
+}
+
+.niveau small {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+  margin-top: 1px;
 }
 
 .niveau--actif {
@@ -293,7 +303,9 @@ main {
 
 .fin-actions {
   display: flex;
+  gap: 8px;
   justify-content: center;
+  flex-wrap: wrap;
   margin-top: 20px;
 }
 
@@ -317,5 +329,15 @@ main {
   .touche-chiffre {
     aspect-ratio: 1;
     font-size: 1.5rem;
+  }
+}
+
+.erreurs--critique {
+  color: #c9452b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .erreurs--critique {
+    color: #f08a6d;
   }
 }

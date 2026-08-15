@@ -6,8 +6,8 @@
     <title>Sudoku — CogitoPlay</title>
     <meta name="description" content="La grille de sudoku du jour, en trois niveaux." />
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../shared/style-commun.css?v=6" />
-    <link rel="stylesheet" href="jeu.css?v=6" />
+    <link rel="stylesheet" href="../shared/style-commun.css?v=7" />
+    <link rel="stylesheet" href="jeu.css?v=7" />
   </head>
   <body>
     <header class="jm-entete">
@@ -21,9 +21,9 @@
 
     <main id="jeu" hidden>
       <div class="niveaux" id="niveaux" role="group" aria-label="Niveau">
-        <button class="jm-bouton niveau" data-niveau="facile">Facile</button>
-        <button class="jm-bouton niveau" data-niveau="moyen">Moyen</button>
-        <button class="jm-bouton niveau" data-niveau="difficile">Difficile</button>
+        <button class="jm-bouton niveau" data-niveau="facile">Facile<small>sans limite</small></button>
+        <button class="jm-bouton niveau" data-niveau="moyen">Moyen<small>5 erreurs</small></button>
+        <button class="jm-bouton niveau" data-niveau="difficile">Difficile<small>3 erreurs</small></button>
       </div>
 
       <div class="barre">
@@ -82,6 +82,12 @@
             Un chiffre faux s’affiche en rouge et compte une erreur — libre à vous de le laisser ou
             de le corriger.
           </li>
+          <li>
+            <strong>Le nombre d’erreurs est limité</strong> selon le niveau : illimité en facile,
+            <strong>5 en moyen</strong>, <strong>3 en difficile</strong>. À la dernière, la grille
+            est perdue et il faut la reprendre depuis le début. Effacer un chiffre faux ne rend pas
+            l’erreur.
+          </li>
           <li>Le bouton 💡 dévoile une case. Trois indices par jour.</li>
         </ul>
 
@@ -99,7 +105,7 @@
     <dialog class="jm-modale" id="modale-fin">
       <div class="jm-modale-contenu">
         <button class="jm-bouton jm-bouton--icone jm-modale-fermer" data-fermer aria-label="Fermer">✕</button>
-        <h2>Grille terminée</h2>
+        <h2 id="fin-titre">Grille terminée</h2>
         <p class="fin-mot" id="fin-mot"></p>
 
         <div class="fin-chiffres">
@@ -112,14 +118,17 @@
         </p>
 
         <div class="fin-actions">
-          <a class="jm-bouton jm-bouton--principal" href="../index.html">Les autres jeux</a>
+          <button class="jm-bouton jm-bouton--principal" id="btn-rejouer" hidden>
+            Recommencer cette grille
+          </button>
+          <a class="jm-bouton" href="../index.html">Les autres jeux</a>
         </div>
       </div>
     </dialog>
 
-    <script src="../shared/seed.js?v=6"></script>
-    <script src="../shared/message.js?v=6"></script>
-    <script src="../shared/storage.js?v=6"></script>
-    <script src="jeu.js?v=6"></script>
+    <script src="../shared/seed.js?v=7"></script>
+    <script src="../shared/message.js?v=7"></script>
+    <script src="../shared/storage.js?v=7"></script>
+    <script src="jeu.js?v=7"></script>
   </body>
 </html>

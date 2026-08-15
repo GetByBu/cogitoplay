@@ -62,6 +62,11 @@ que si la grille conserve **une seule** solution, vérifiée par dénombrement. 
 joueur n'a donc jamais à deviner. Comptez 3 ms de génération en facile, 27 ms en
 difficile.
 
+Le nombre d'erreurs permises dépend du niveau : illimité en facile, **cinq** en
+moyen, **trois** en difficile. À la dernière, la partie est perdue et la grille
+se reprend depuis le début — c'est ce qui donne du poids aux niveaux hauts, où
+poser un chiffre au jugé devient coûteux.
+
 La fleur garantit son pangramme de la même façon que les grilles garantissent
 leur mot long : on ne tire pas sept lettres en espérant qu'un mot les utilise
 toutes, on part d'un mot du dictionnaire qui compte exactement sept lettres
