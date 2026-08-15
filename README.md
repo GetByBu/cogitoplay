@@ -20,11 +20,15 @@ Puis ouvrir <http://localhost:8000/>.
 Site statique servi tel quel par GitHub Pages depuis la racine de la branche
 `main` — aucune étape de construction.
 
-- `CNAME` déclare le domaine `cogitoplay.com` à GitHub Pages.
 - `.nojekyll` désactive Jekyll : le site n'en a pas besoin, et Jekyll écarterait
   silencieusement certains fichiers.
-- Côté registrar, le domaine pointe vers les quatre adresses de GitHub Pages
-  (`185.199.108-111.153`), plus un `CNAME` pour `www`.
+- Pas de fichier `CNAME` pour l'instant : le site est servi à l'adresse
+  `github.io` par défaut. Le jour où `cogitoplay.com` est enregistré, ajouter un
+  fichier `CNAME` contenant `cogitoplay.com` à la racine, et faire pointer le
+  domaine vers les quatre adresses de GitHub Pages (`185.199.108-111.153`) plus
+  un `CNAME` pour `www`. **Attention à l'ordre** : un fichier `CNAME` présent
+  avant que le domaine ne résolve rend le site injoignable, GitHub redirigeant
+  vers un domaine qui n'existe pas encore.
 
 GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
 dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
