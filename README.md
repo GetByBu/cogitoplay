@@ -15,6 +15,20 @@ cd jeux-mots && python3 -m http.server 8000
 
 Puis ouvrir <http://localhost:8000/>.
 
+## Publication
+
+Site statique servi tel quel par GitHub Pages depuis la racine de la branche
+`main` — aucune étape de construction.
+
+- `CNAME` déclare le domaine `cogitoplay.com` à GitHub Pages.
+- `.nojekyll` désactive Jekyll : le site n'en a pas besoin, et Jekyll écarterait
+  silencieusement certains fichiers.
+- Côté registrar, le domaine pointe vers les quatre adresses de GitHub Pages
+  (`185.199.108-111.153`), plus un `CNAME` pour `www`.
+
+GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
+dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
+
 ## Contenu
 
 | Dossier | Jeu | Langue | Rythme | Dictionnaire |
