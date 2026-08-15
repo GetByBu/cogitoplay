@@ -67,7 +67,6 @@
     saisie: document.getElementById('saisie'),
     liste: document.getElementById('liste-mots'),
     compteur: document.getElementById('compteur'),
-    score: document.getElementById('score'),
     messages: document.getElementById('messages'),
     annonce: document.getElementById('annonce'),
     periodeInfo: document.getElementById('periode-info'),
@@ -520,7 +519,6 @@
   });
 
   document.getElementById('btn-progres').addEventListener('click', ouvrirProgres);
-  document.getElementById('rang-barre').addEventListener('click', ouvrirProgres);
 
   document.querySelectorAll('[data-fermer]').forEach(function (bouton) {
     bouton.addEventListener('click', function () {

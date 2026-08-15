@@ -45,6 +45,18 @@ sed -i '' 's/?v=6/?v=7/g' index.html jeu-*/index.html
 GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
 dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
 
+## Vérification
+
+Le site n'a pas d'étape de construction : rien ne relie une page à ses scripts.
+Une référence à un identifiant disparu du HTML lève une exception qui interrompt
+le script, et tout ce qui suit la ligne fautive n'est jamais exécuté — c'est
+ainsi que la fleur avait perdu la fermeture de ses fenêtres. À lancer après
+toute modification du balisage :
+
+```bash
+python3 outils/verifie-identifiants.py
+```
+
 ## Contenu
 
 | Dossier | Jeu | Langue | Rythme | Dictionnaire |
