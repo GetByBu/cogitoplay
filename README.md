@@ -30,6 +30,18 @@ Site statique servi tel quel par GitHub Pages depuis la racine de la branche
   avant que le domaine ne résolve rend le site injoignable, GitHub redirigeant
   vers un domaine qui n'existe pas encore.
 
+### Cache et numéro de version
+
+Les feuilles de style et les scripts sont appelés avec un suffixe `?v=N` dans
+les cinq pages HTML. **Il faut incrémenter ce numéro à chaque modification d'un
+fichier de `shared/`** : sans lui, un joueur qui revient reçoit la page neuve
+mais garde l'ancien JavaScript en cache, et la page casse. Une seule commande
+suffit :
+
+```bash
+sed -i '' 's/?v=2/?v=3/g' index.html jeu-*/index.html
+```
+
 GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
 dictionnaire des formes fléchies passent à environ 1,5 Mo sur le réseau.
 
