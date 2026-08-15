@@ -25,58 +25,6 @@ main {
   border: 0;
 }
 
-/* ---------- Barre de rang ---------- */
-
-.rang {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 10px 16px;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  background: var(--fond-carte);
-  border: none;
-  border-bottom: 1px solid var(--bord);
-  cursor: pointer;
-}
-
-.rang-nom {
-  font-weight: 650;
-  font-size: 0.95rem;
-  white-space: nowrap;
-}
-
-.rang-piste {
-  flex: 1;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--fond-doux);
-  overflow: hidden;
-}
-
-.rang-jauge {
-  display: block;
-  height: 100%;
-  width: 0;
-  border-radius: 999px;
-  background: var(--accent);
-  transition: width 0.4s ease;
-}
-
-.rang-score {
-  font-size: 0.85rem;
-  color: var(--texte-doux);
-  white-space: nowrap;
-}
-
-.rang-score b {
-  font-family: var(--police-mots);
-  font-size: 1.05rem;
-  color: var(--texte);
-}
-
 /* ---------- Disposition ---------- */
 
 .zone {
@@ -99,17 +47,29 @@ main {
 /* ---------- Saisie ---------- */
 
 .saisie {
-  min-height: 2.6rem;
-  display: grid;
-  place-items: center;
-  padding: 4px 12px;
+  min-height: 3rem;
+  width: min(92vw, 22rem);
+  /* Une boîte flex en ligne : chaque lettre est un span, la lettre centrale
+     comprise. En grille, elle partait seule à la ligne et poussait le reste. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
   font-family: var(--police-mots);
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
   text-transform: uppercase;
-  word-break: break-all;
   text-align: center;
+  background: var(--fond-doux);
+  border: 1px dashed var(--bord-fort);
+  border-radius: var(--rayon);
+}
+
+.saisie-lettre {
+  display: inline-block;
+  padding: 0 0.06em;
+  line-height: 1.15;
 }
 
 .saisie--vide::before {
@@ -124,6 +84,27 @@ main {
 
 .saisie .centre {
   color: var(--accent);
+}
+
+.bouton-libelle {
+  font-size: 0.9rem;
+}
+
+.commandes .jm-bouton {
+  min-width: 3rem;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.message--indice {
+  background: var(--accent) !important;
+  color: #fff !important;
+  max-width: min(92vw, 26rem);
+  text-align: center;
+  white-space: normal;
 }
 
 .saisie--refus {
@@ -227,12 +208,9 @@ main {
 .commandes {
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
-}
-
-.commandes .jm-bouton {
-  min-width: 3rem;
-  height: 2.8rem;
 }
 
 /* ---------- Mots trouvés ---------- */
@@ -327,6 +305,10 @@ main {
   padding: 5px 10px;
   border-radius: var(--rayon);
   font-size: 0.9rem;
+}
+
+.rangs li span:first-child {
+  flex: 1;
 }
 
 .rangs li span:last-child {

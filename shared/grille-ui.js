@@ -21,8 +21,10 @@
       grille: document.getElementById('grille'),
       saisie: document.getElementById('saisie'),
       chrono: document.getElementById('chrono'),
-      score: document.getElementById('score'),
       compteur: document.getElementById('compteur'),
+      saisieMot: document.querySelector('.saisie-mot'),
+      saisieCompte: document.querySelector('.saisie-compte'),
+      progression: document.getElementById('progression'),
       liste: document.getElementById('liste-mots'),
       messages: document.getElementById('messages'),
       annonce: document.getElementById('annonce'),
@@ -54,7 +56,15 @@
       restant: config.duree,
       numeroJour: 0,
       minuterie: null,
+      scoreMax: 0,
+      pastilles: new Map(), // mot -> <li>, pour surligner un mot déjà trouvé
     };
+
+    const progression = JM.progression.installer(el.progression, {
+      partCible: config.partCible,
+      paliers: JM.progression.PALIERS_FR,
+      textes: {},
+    });
 
     JM.prefs.appliquer();
 
@@ -78,6 +88,9 @@
 
         etat.lettres = grille.lettres;
         etat.solution = grille.solution;
+        etat.solution.forEach(function (mot) {
+          etat.scoreMax += JM.grille.points(mot);
+        });
 
         construireGrille();
         appliquerLangue(langue);
@@ -119,7 +132,13 @@
         );
       });
 
-      el.saisie.dataset.invite = T.invite;
+      el.saisieMot.dataset.invite = T.invite;
+      progression.configurer({
+        paliers: langue === 'en' ? JM.progression.PALIERS_EN : JM.progression.PALIERS_FR,
+        textes: T.progression,
+      });
+      majEntete();
+      if (etat.lettres.length) afficherSaisie(); // le compteur de mots aussi est traduit
       cases.forEach(function (bouton, index) {
         bouton.setAttribute(
           'aria-label',
@@ -262,14 +281,64 @@
     }
 
     function afficherSaisie() {
-      el.saisie.textContent = etat.motCourant;
-      el.saisie.classList.toggle('saisie--vide', etat.motCourant.length === 0);
-      const surbrillance = etat.chemin || JM.grille.cheminDuMot(etat.lettres, etat.motCourant) || [];
+      const mot = etat.motCourant;
+      el.saisieMot.textContent = mot;
+      el.saisie.classList.toggle('saisie--vide', mot.length === 0);
+
+      // Combien de mots restent à trouver derrière ce début de mot.
+      el.saisieCompte.textContent = mot.length === 0 ? '' : T.motsPossibles(compterPossibles(mot));
+      el.saisieCompte.classList.toggle('saisie-compte--vide', mot.length > 0 && compterPossibles(mot) === 0);
+
+      const surbrillance = etat.chemin || JM.grille.cheminDuMot(etat.lettres, mot) || [];
       cases.forEach(function (bouton, index) {
         const rang = surbrillance.indexOf(index);
         bouton.classList.toggle('case-grille--active', rang !== -1);
         bouton.classList.toggle('case-grille--depart', rang === 0);
       });
+
+      surlignerDejaTrouves(mot);
+    }
+
+    /** Mots encore à trouver qui commencent par ce début de mot. */
+    function compterPossibles(debut) {
+      let compte = 0;
+      etat.solution.forEach(function (mot) {
+        if (mot.indexOf(debut) === 0 && etat.motsTrouves.indexOf(mot) === -1) compte++;
+      });
+      return compte;
+    }
+
+    /**
+     * Surligne dans la liste les mots déjà trouvés qui commencent comme la
+     * saisie en cours : on voit tout de suite qu'on est en train de retaper un
+     * mot déjà acquis, sans avoir à parcourir la liste des yeux.
+     */
+    function surlignerDejaTrouves(debut) {
+      etat.pastilles.forEach(function (pastille, mot) {
+        const correspond = debut.length > 0 && mot.indexOf(debut) === 0;
+        pastille.classList.toggle('mot-trouve--rappel', correspond);
+        const graphie = JM.graphie(etat.dico, mot);
+        const span = pastille.firstElementChild;
+        if (!correspond) {
+          span.textContent = graphie;
+          return;
+        }
+        const coupe = coupeGraphie(graphie, debut.length);
+        span.innerHTML =
+          '<mark>' + echapper(graphie.slice(0, coupe)) + '</mark>' + echapper(graphie.slice(coupe));
+      });
+    }
+
+    /**
+     * Où couper la graphie accentuée pour surligner `longueur` lettres de la
+     * forme normalisée. Les deux ne font pas toujours la même longueur : « œuf »
+     * s'écrit « oeuf » une fois normalisé.
+     */
+    function coupeGraphie(graphie, longueur) {
+      for (let i = 1; i <= graphie.length; i++) {
+        if (JM.normaliser(graphie.slice(0, i)).length >= longueur) return i;
+      }
+      return graphie.length;
     }
 
     // ------------------------------------------------------------ Validation
@@ -307,13 +376,19 @@
     }
 
     function accepter(mot, gain) {
+      const puce = creerPastille(mot, gain);
+      el.liste.insertBefore(puce, el.liste.firstChild);
+      message('+' + gain, 'succes');
+      el.annonce.textContent = T.annonceMot(JM.graphie(etat.dico, mot), gain);
+    }
+
+    function creerPastille(mot, gain) {
       const puce = document.createElement('li');
       puce.className = 'mot-trouve';
       puce.innerHTML =
         '<span>' + echapper(JM.graphie(etat.dico, mot)) + '</span><b>+' + gain + '</b>';
-      el.liste.insertBefore(puce, el.liste.firstChild);
-      message('+' + gain, 'succes');
-      el.annonce.textContent = T.annonceMot(JM.graphie(etat.dico, mot), gain);
+      etat.pastilles.set(mot, puce);
+      return puce;
     }
 
     function refuser(texte) {
@@ -340,8 +415,8 @@
     }
 
     function majEntete() {
-      el.score.textContent = etat.score;
       el.compteur.textContent = etat.motsTrouves.length;
+      progression.maj(etat.score, etat.scoreMax);
     }
 
     // ---------------------------------------------------------------- Chrono
@@ -463,11 +538,7 @@
       etat.motsTrouves = partie.mots || [];
       etat.score = partie.score || 0;
       etat.motsTrouves.forEach(function (mot) {
-        const puce = document.createElement('li');
-        puce.className = 'mot-trouve';
-        puce.innerHTML =
-          '<span>' + echapper(JM.graphie(etat.dico, mot)) + '</span><b>+' + JM.grille.points(mot) + '</b>';
-        el.liste.insertBefore(puce, el.liste.firstChild);
+        el.liste.insertBefore(creerPastille(mot, JM.grille.points(mot)), el.liste.firstChild);
       });
       majEntete();
 
@@ -512,7 +583,8 @@
     // -------------------------------------------------------------- Commandes
 
     document.getElementById('btn-commencer').addEventListener('click', function () {
-      demarrer(!document.getElementById('opt-libre').checked);
+      // Mode libre par défaut : le chrono est une option à cocher.
+      demarrer(document.getElementById('opt-chrono').checked);
     });
 
     document.getElementById('btn-valider').addEventListener('click', function () {
@@ -520,8 +592,7 @@
     });
 
     document.getElementById('btn-effacer').addEventListener('click', function () {
-      reinitialiserSaisie();
-      afficherSaisie();
+      effacerLettre();
     });
 
     document.getElementById('btn-terminer').addEventListener('click', function () {

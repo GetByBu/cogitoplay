@@ -71,6 +71,10 @@ centrale et à vérifier que la récolte tient entre 30 et 250 mots.
   dans le HTML, les textes dynamiques viennent de `config.textes[langue]`. Le
   jeu anglais offre les deux langues (bouton FR/EN dans l'en-tête, choix
   mémorisé) ; les jeux français ne déclarent que le français.
+- `progression.js` — barre de progression commune aux grilles et à la fleur :
+  deux repères (une **cible** atteignable qui vaut victoire, le **maximum** que
+  presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre
+  au delà — chacun avec son émoticône et son mot d'encouragement.
 - `storage.js` — accès `localStorage` tolérant au mode privé.
 - `style-commun.css` — variables de thème (clair/sombre), en-tête, boutons,
   modales.
@@ -86,6 +90,7 @@ Uniquement dans le `localStorage` du navigateur, sous le préfixe `jm.` :
 | `jm.grille-fr.v1`, `jm.grille-en.v1` | grille du jour : mots trouvés, score, temps restant, partie terminée ou non |
 | `jm.grille-fr.v1.stats`, `jm.grille-en.v1.stats` | parties jouées, meilleur score |
 | `jm.fleur.v1` | quinzaine en cours : mots trouvés et score |
+| `jm.fleur.indices.v1` | indices utilisés dans la journée (trois maximum) |
 | `jm.prefs.v1` | palette de couleurs et langue d'interface choisies |
 
 Aucun identifiant, aucune donnée personnelle, rien ne sort de l'appareil. Le
@@ -111,7 +116,14 @@ des résidus de noms propres. Deux garde-fous côté jeu :
 - Chaque jeu expose une constante `MOTS_EXCLUS` pour écarter au cas par cas un
   mot repéré à l'usage.
 
-Les grilles, elles, acceptent tout ce qui est au dictionnaire : restreindre la
+Les grilles démarrent en **mode libre** ; le chrono de trois minutes est une
+case à cocher sur l'écran de départ. La zone de saisie, posée au dessus de la
+grille, annonce au fil de la frappe combien de mots restent à trouver derrière
+ce début de mot, et surligne dans la liste un mot déjà trouvé qui commencerait
+pareil. La fleur, elle, offre trois indices par jour : longueur et deux
+premières lettres d'un mot manquant.
+
+Les grilles acceptent tout ce qui est au dictionnaire : restreindre la
 liste reviendrait à refuser des mots corrects tapés par le joueur. En revanche
 l'écran de fin n'affiche d'emblée que les 18 mots ratés les plus longs, le reste
 derrière un bouton — faute de liste de fréquences, c'est la longueur qui sert de

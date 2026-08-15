@@ -48,36 +48,27 @@
 
     <main id="jeu" hidden>
       <div class="barre">
-        <div><b id="chrono">3:00</b><span data-en="Time">Temps</span></div>
-        <div><b id="score">0</b><span data-en="Points">Points</span></div>
+        <div><b id="chrono">∞</b><span data-en="Time">Temps</span></div>
         <div><b id="compteur">0</b><span data-en="Words">Mots</span></div>
-        <button class="jm-bouton jm-bouton--discret" id="btn-terminer" data-en="Finish" hidden>
-          Terminer
-        </button>
+        <button class="jm-bouton jm-bouton--discret" id="btn-terminer" data-en="Finish" hidden>Terminer</button>
       </div>
 
-      <div class="zone">
-        <div id="grille" class="grille" role="group" aria-label="Letter grid"></div>
+      <div id="progression"></div>
 
-        <div class="saisie-zone">
-          <div
-            id="saisie"
-            class="saisie saisie--vide"
-            data-invite="Formez un mot"
-            aria-live="polite"
-          ></div>
+      <div class="zone">
+        <div class="colonne-jeu">
+          <div id="saisie" class="saisie saisie--vide" aria-live="polite">
+            <span class="saisie-mot" data-invite="Formez un mot"></span>
+            <span class="saisie-compte"></span>
+          </div>
+
+          <div id="grille" class="grille" role="group" aria-label="Letter grid"></div>
+
           <div class="boutons-saisie">
-            <button
-              class="jm-bouton"
-              id="btn-effacer"
-              aria-label="Effacer la saisie"
-              data-en-aria="Clear"
-            >
-              ✕
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la dernière lettre" data-en-aria="Delete last letter">
+              ⌫ <span class="bouton-libelle" data-en="Delete">Effacer</span>
             </button>
-            <button class="jm-bouton jm-bouton--principal" id="btn-valider" data-en="Submit">
-              Valider
-            </button>
+            <button class="jm-bouton jm-bouton--principal" id="btn-valider" data-en="Submit">Valider</button>
           </div>
         </div>
 
@@ -90,17 +81,15 @@
         <div class="depart-carte">
           <h2 data-en="Today’s grid">La grille du jour</h2>
           <p
-            data-en="Three minutes to build as many <strong>English</strong> words as you can from letters that touch each other. Everyone plays the same grid today."
+            data-en="Build as many <strong>English</strong> words as you can from letters that touch each other. Everyone plays the same grid today."
           >
-            Trois minutes pour former le plus de mots <strong>anglais</strong> possible en reliant
-            des lettres qui se touchent. La grille est la même pour tout le monde aujourd’hui.
+            Formez le plus de mots <strong>anglais</strong> possible en reliant des lettres qui se
+            touchent. La grille est la même pour tout le monde aujourd’hui.
           </p>
-          <button class="jm-bouton jm-bouton--principal" id="btn-commencer" data-en="Start">
-            Commencer
-          </button>
+          <button class="jm-bouton jm-bouton--principal" id="btn-commencer" data-en="Start">Commencer</button>
           <label class="option">
-            <input type="checkbox" id="opt-libre" />
-            <span data-en="Free play, no timer">Mode libre, sans chrono</span>
+            <input type="checkbox" id="opt-chrono" />
+            <span data-en="Add a 3-minute timer">Ajouter un chrono de 3 minutes</span>
           </label>
         </div>
       </div>
@@ -237,6 +226,7 @@
     </dialog>
 
     <script src="../shared/seed.js"></script>
+    <script src="../shared/progression.js"></script>
     <script src="../shared/storage.js"></script>
     <script src="../shared/dico.js"></script>
     <script src="../shared/grille.js"></script>

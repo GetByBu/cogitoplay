@@ -32,6 +32,8 @@ JM.demarrerJeuGrille({
   voyellesMin: 5,
   voyellesMax: 7,
 
+  partCible: 0.3,
+
   langue: 'fr',
   languesOffertes: ['fr', 'en'],
 
@@ -58,6 +60,11 @@ JM.demarrerJeuGrille({
       voirTout: function (nombre) {
         return `Voir les ${nombre} autres`;
       },
+      motsPossibles: function (nombre) {
+        if (nombre === 0) return 'aucun mot à trouver ainsi';
+        return nombre === 1 ? '1 mot possible' : `${nombre} mots possibles`;
+      },
+      progression: { cible: 'cible', max: 'max', points: 'pts' },
       partage: function (numero, score, mots, total) {
         return `Grille anglaise n°${numero} — ${score} points, ${mots} mots sur ${total}`;
       },
@@ -85,6 +92,11 @@ JM.demarrerJeuGrille({
       voirTout: function (nombre) {
         return `Show the other ${nombre}`;
       },
+      motsPossibles: function (nombre) {
+        if (nombre === 0) return 'no word starts like that';
+        return nombre === 1 ? '1 word possible' : `${nombre} words possible`;
+      },
+      progression: { cible: 'target', max: 'max', points: 'pts' },
       partage: function (numero, score, mots, total) {
         return `Letter Grid #${numero} — ${score} points, ${mots} words out of ${total}`;
       },

@@ -21,19 +21,26 @@
 
     <main id="jeu" hidden>
       <div class="barre">
-        <div><b id="chrono">3:00</b><span>Temps</span></div>
-        <div><b id="score">0</b><span>Points</span></div>
+        <div><b id="chrono">∞</b><span>Temps</span></div>
         <div><b id="compteur">0</b><span>Mots</span></div>
         <button class="jm-bouton jm-bouton--discret" id="btn-terminer" hidden>Terminer</button>
       </div>
 
-      <div class="zone">
-        <div id="grille" class="grille" role="group" aria-label="Grille de lettres"></div>
+      <div id="progression"></div>
 
-        <div class="saisie-zone">
-          <div id="saisie" class="saisie saisie--vide" data-invite="Formez un mot" aria-live="polite"></div>
+      <div class="zone">
+        <div class="colonne-jeu">
+          <div id="saisie" class="saisie saisie--vide" aria-live="polite">
+            <span class="saisie-mot" data-invite="Formez un mot"></span>
+            <span class="saisie-compte"></span>
+          </div>
+
+          <div id="grille" class="grille" role="group" aria-label="Grille de lettres"></div>
+
           <div class="boutons-saisie">
-            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la saisie">✕</button>
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la dernière lettre">
+              ⌫ <span class="bouton-libelle">Effacer</span>
+            </button>
             <button class="jm-bouton jm-bouton--principal" id="btn-valider">Valider</button>
           </div>
         </div>
@@ -47,13 +54,13 @@
         <div class="depart-carte">
           <h2>La grille du jour</h2>
           <p>
-            Trois minutes pour former le plus de mots possible en reliant des lettres qui se
-            touchent. La grille est la même pour tout le monde aujourd’hui.
+            Formez le plus de mots possible en reliant des lettres qui se touchent. La grille est
+            la même pour tout le monde aujourd’hui.
           </p>
           <button class="jm-bouton jm-bouton--principal" id="btn-commencer">Commencer</button>
           <label class="option">
-            <input type="checkbox" id="opt-libre" />
-            Mode libre, sans chrono
+            <input type="checkbox" id="opt-chrono" />
+            Ajouter un chrono de 3 minutes
           </label>
         </div>
       </div>
@@ -160,6 +167,7 @@
     </dialog>
 
     <script src="../shared/seed.js"></script>
+    <script src="../shared/progression.js"></script>
     <script src="../shared/storage.js"></script>
     <script src="../shared/dico.js"></script>
     <script src="../shared/grille.js"></script>

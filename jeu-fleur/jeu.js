@@ -28,20 +28,13 @@
 
   const BONUS_PANGRAMME = 7;
   const CLE_STOCKAGE = 'fleur.v1';
+  const CLE_INDICES = 'fleur.indices.v1';
 
-  // Rangs, en pourcentage du score maximum de la fleur.
-  const RANGS = [
-    { seuil: 0, nom: 'Graine' },
-    { seuil: 2, nom: 'Germe' },
-    { seuil: 5, nom: 'Pousse' },
-    { seuil: 10, nom: 'Tige' },
-    { seuil: 20, nom: 'Bourgeon' },
-    { seuil: 32, nom: 'Éclosion' },
-    { seuil: 45, nom: 'Floraison' },
-    { seuil: 60, nom: 'Bouquet' },
-    { seuil: 75, nom: 'Jardin' },
-    { seuil: 100, nom: 'Herbier' },
-  ];
+  // Cible de victoire : 45 % du score maximum. La fleur dure deux semaines,
+  // l'objectif peut donc être plus ambitieux que sur une grille quotidienne.
+  const PART_CIBLE = 0.45;
+
+  const INDICES_PAR_JOUR = 3;
 
   const CODE_A = 'a'.charCodeAt(0);
 
@@ -60,6 +53,12 @@
     periode: 0,
   };
 
+  const progression = JM.progression.installer(document.getElementById('progression'), {
+    partCible: PART_CIBLE,
+    paliers: JM.progression.PALIERS_FR,
+    textes: { cible: 'cible', max: 'max', points: 'pts' },
+  });
+
   const el = {
     jeu: document.getElementById('jeu'),
     chargement: document.getElementById('chargement'),
@@ -69,8 +68,6 @@
     liste: document.getElementById('liste-mots'),
     compteur: document.getElementById('compteur'),
     score: document.getElementById('score'),
-    rangNom: document.getElementById('rang-nom'),
-    rangJauge: document.getElementById('rang-jauge'),
     messages: document.getElementById('messages'),
     annonce: document.getElementById('annonce'),
     periodeInfo: document.getElementById('periode-info'),
@@ -291,12 +288,19 @@
 
   function afficherSaisie() {
     el.saisie.classList.toggle('saisie--vide', etat.saisie.length === 0);
-    // La lettre centrale est colorée dans la saisie : on voit d'un coup d'œil
-    // si le mot en cours la contient.
+    // Chaque lettre dans son propre span, y compris celle du centre qui est
+    // colorée : mélanger spans et texte brut dans une boîte flex faisait passer
+    // la lettre centrale à la ligne et poussait tout le reste vers le bas.
     el.saisie.innerHTML = etat.saisie
       .split('')
       .map(function (lettre) {
-        return lettre === etat.centre ? '<span class="centre">' + lettre + '</span>' : lettre;
+        return (
+          '<span class="saisie-lettre' +
+          (lettre === etat.centre ? ' centre' : '') +
+          '">' +
+          lettre +
+          '</span>'
+        );
       })
       .join('');
   }
@@ -365,71 +369,106 @@
     p.className = 'message--' + genre;
     p.textContent = texte;
     el.messages.appendChild(p);
+    const duree = genre === 'indice' ? 6000 : genre === 'pangramme' ? 2400 : 1400;
     setTimeout(function () {
       p.remove();
-    }, genre === 'pangramme' ? 2400 : 1400);
+    }, duree);
   }
 
   // ------------------------------------------------------------- Progression
 
-  function rangCourant() {
-    const pourcentage = etat.scoreMax ? (etat.score / etat.scoreMax) * 100 : 0;
-    let rang = RANGS[0];
-    let suivant = null;
-    for (let i = 0; i < RANGS.length; i++) {
-      if (pourcentage >= RANGS[i].seuil) rang = RANGS[i];
-      else {
-        suivant = RANGS[i];
-        break;
-      }
-    }
-    return { rang: rang, suivant: suivant, pourcentage: pourcentage };
-  }
-
-  function pointsDuSeuil(seuil) {
-    return Math.ceil((seuil / 100) * etat.scoreMax);
-  }
-
   function majEntete() {
-    const info = rangCourant();
-    el.score.textContent = etat.score;
     el.compteur.textContent = etat.motsTrouves.length;
-    el.rangNom.textContent = info.rang.nom;
-    el.rangJauge.style.width = Math.min(100, info.pourcentage) + '%';
+    progression.maj(etat.score, etat.scoreMax);
     document.getElementById('libelle-mots').textContent =
       etat.motsTrouves.length > 1 ? 'mots trouvés' : 'mot trouvé';
   }
 
   function ouvrirProgres() {
-    const info = rangCourant();
+    const infos = progression.etat(etat.score, etat.scoreMax);
     const pangrammesTrouves = etat.motsTrouves.filter(estPangramme).length;
     const pangrammesTotal = etat.solution.filter(estPangramme).length;
+    const paliers = JM.progression.PALIERS_FR;
 
     document.getElementById('progres-resume').innerHTML =
-      `Rang <strong>${echapper(info.rang.nom)}</strong> avec <strong>${etat.score}</strong> points sur ` +
-      `${etat.scoreMax} possibles, ${etat.motsTrouves.length} mots trouvés sur ${etat.solution.length}. ` +
-      `Pangrammes : ${pangrammesTrouves} sur ${pangrammesTotal}.` +
-      (info.suivant
-        ? ` Encore ${pointsDuSeuil(info.suivant.seuil) - etat.score} points pour atteindre ` +
-          `<strong>${echapper(info.suivant.nom)}</strong>.`
-        : ' Vous avez tout trouvé.');
+      `<strong>${etat.score}</strong> points sur ${etat.scoreMax} possibles, ` +
+      `${etat.motsTrouves.length} mots trouvés sur ${etat.solution.length}. ` +
+      `Pangrammes : ${pangrammesTrouves} sur ${pangrammesTotal}. ` +
+      (infos.gagne
+        ? 'Cible atteinte.'
+        : `Encore <strong>${infos.cible - etat.score}</strong> points pour atteindre la cible.`);
 
-    document.getElementById('liste-rangs').innerHTML = RANGS.map(function (r) {
-      const atteint = etat.score >= pointsDuSeuil(r.seuil);
-      const courant = r.nom === info.rang.nom;
-      return (
-        '<li class="' +
-        (courant ? 'courant' : atteint ? 'atteint' : '') +
-        '"><span>' +
-        echapper(r.nom) +
-        '</span><span>' +
-        pointsDuSeuil(r.seuil) +
-        ' pts</span></li>'
-      );
-    }).join('');
+    const seuils = JM.progression.seuils(etat.scoreMax, PART_CIBLE);
+    document.getElementById('liste-rangs').innerHTML = seuils
+      .map(function (seuil, i) {
+        const palier = paliers[i + 1];
+        const atteint = etat.score >= seuil;
+        const courant = infos.palier === i + 1;
+        return (
+          '<li class="' +
+          (courant ? 'courant' : atteint ? 'atteint' : '') +
+          '"><span>' +
+          palier.emoji +
+          ' ' +
+          echapper(palier.mot) +
+          (i === 7 ? ' <em>(cible)</em>' : '') +
+          '</span><span>' +
+          seuil +
+          ' pts</span></li>'
+        );
+      })
+      .join('');
 
     el.modaleProgres.showModal();
   }
+
+  // ----------------------------------------------------------------- Indices
+
+  /**
+   * Un indice donne la longueur et les deux premières lettres d'un mot qui
+   * manque — de quoi débloquer une piste sans livrer la réponse. Trois par
+   * jour, le compteur repart à minuit.
+   */
+  function lireIndices() {
+    const brut = JM.storage.lire(CLE_INDICES, null);
+    const jour = JM.numeroJour();
+    if (!brut || brut.jour !== jour) return { jour: jour, utilises: 0 };
+    return brut;
+  }
+
+  function demanderIndice() {
+    const compteur = lireIndices();
+    if (compteur.utilises >= INDICES_PAR_JOUR) {
+      message('Plus d’indice avant demain', 'refus');
+      return;
+    }
+
+    const manquants = etat.solution.filter(function (mot) {
+      return etat.motsTrouves.indexOf(mot) === -1;
+    });
+    if (manquants.length === 0) {
+      message('Vous avez déjà tout trouvé', 'succes');
+      return;
+    }
+
+    // Tirage reproductible : le même indice tant qu'on ne l'a pas consommé.
+    const rng = JM.rng(`indice:P${etat.periode}:${compteur.utilises}:${etat.motsTrouves.length}`);
+    const mot = manquants[JM.entier(rng, manquants.length)];
+    const debut = JM.graphie(etat.dico, mot).slice(0, 2).toUpperCase();
+
+    compteur.utilises += 1;
+    JM.storage.ecrire(CLE_INDICES, compteur);
+
+    const reste = INDICES_PAR_JOUR - compteur.utilises;
+    message(
+      `Il vous manque un mot de ${mot.length} lettres qui commence par ${debut}` +
+        ` · ${reste} indice${reste > 1 ? 's' : ''} restant${reste > 1 ? 's' : ''}`,
+      'indice'
+    );
+    el.annonce.textContent = `Indice : un mot de ${mot.length} lettres commençant par ${debut}.`;
+  }
+
+  document.getElementById('btn-indice').addEventListener('click', demanderIndice);
 
   // -------------------------------------------------------------- Sauvegarde
 
@@ -460,7 +499,7 @@
   document.getElementById('btn-valider').addEventListener('click', valider);
 
   document.getElementById('btn-effacer').addEventListener('click', function () {
-    etat.saisie = '';
+    etat.saisie = etat.saisie.slice(0, -1);
     afficherSaisie();
   });
 
@@ -496,9 +535,10 @@
   });
 
   document.getElementById('btn-partager').addEventListener('click', function () {
-    const info = rangCourant();
+    const infos = progression.etat(etat.score, etat.scoreMax);
     copier(
-      `Fleur de lettres n°${etat.periode + 1} — ${etat.score} points, rang ${info.rang.nom}, ` +
+      `Fleur de lettres n°${etat.periode + 1} — ${etat.score} points ` +
+        `(cible ${infos.cible}, max ${etat.scoreMax}), ` +
         `${etat.motsTrouves.length} mots sur ${etat.solution.length}`
     );
   });

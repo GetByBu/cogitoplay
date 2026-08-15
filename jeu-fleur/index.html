@@ -14,18 +14,14 @@
       <a class="jm-retour" href="../index.html">← Les jeux</a>
       <h1>Fleur de lettres</h1>
       <div class="jm-actions">
+        <button class="jm-bouton jm-bouton--icone" id="btn-indice" aria-label="Demander un indice" title="Indice">💡</button>
         <button class="jm-bouton jm-bouton--icone" id="btn-aide" aria-label="Règles du jeu" title="Règles">?</button>
         <button class="jm-bouton jm-bouton--icone" id="btn-progres" aria-label="Progression" title="Progression">▤</button>
       </div>
     </header>
 
     <main id="jeu" hidden>
-      <!-- Rang et progression -->
-      <button class="rang" id="rang-barre" aria-label="Voir la progression">
-        <span class="rang-nom" id="rang-nom">Graine</span>
-        <span class="rang-piste"><span class="rang-jauge" id="rang-jauge"></span></span>
-        <span class="rang-score"><b id="score">0</b> pts</span>
-      </button>
+      <div id="progression"></div>
 
       <div class="zone">
         <div class="colonne-jeu">
@@ -34,8 +30,12 @@
           <div class="fleur" id="fleur" role="group" aria-label="Les sept lettres"></div>
 
           <div class="commandes">
-            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la saisie">✕</button>
-            <button class="jm-bouton" id="btn-melanger" aria-label="Mélanger les lettres">⟳</button>
+            <button class="jm-bouton" id="btn-effacer" aria-label="Effacer la dernière lettre">
+              ⌫ <span class="bouton-libelle">Effacer</span>
+            </button>
+            <button class="jm-bouton" id="btn-melanger" aria-label="Mélanger les lettres">
+              🔀 <span class="bouton-libelle">Mélanger</span>
+            </button>
             <button class="jm-bouton jm-bouton--principal" id="btn-valider">Entrer</button>
           </div>
         </div>
@@ -71,8 +71,13 @@
           <li>Les autres lettres sont libres, et <strong>réutilisables autant de fois</strong> que vous voulez.</li>
           <li>Entre <strong>4 et 9 lettres</strong>.</li>
           <li>
-            Au clavier : tapez le mot puis Entrée. Sinon cliquez les lettres. Le bouton ⟳ mélange
-            l’affichage quand vous tournez en rond.
+            Au clavier : tapez le mot puis Entrée. Sinon cliquez les lettres. <strong>Mélanger</strong>
+            rebat les six pétales quand vous tournez en rond, <strong>Effacer</strong> retire la
+            dernière lettre.
+          </li>
+          <li>
+            Le bouton 💡 donne un <strong>indice</strong> : la longueur et les deux premières lettres
+            d’un mot qui vous manque. Trois indices par jour.
           </li>
         </ul>
 
@@ -117,7 +122,7 @@
         <h2>Progression</h2>
         <p id="progres-resume"></p>
 
-        <h3>Rangs</h3>
+        <h3>Paliers</h3>
         <ol class="rangs" id="liste-rangs"></ol>
 
         <div class="fin-actions">
@@ -131,6 +136,7 @@
     </dialog>
 
     <script src="../shared/seed.js"></script>
+    <script src="../shared/progression.js"></script>
     <script src="../shared/storage.js"></script>
     <script src="../shared/dico.js"></script>
     <script src="jeu.js"></script>

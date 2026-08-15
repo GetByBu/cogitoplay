@@ -26,10 +26,13 @@
   // repérés à l'usage.
   const MOTS_EXCLUS = [];
 
+  // Les deux touches d'action ont leur propre rangée, en bas : coincées entre
+  // les lettres elles étaient étroites et se touchaient par erreur.
   const CLAVIER = [
     ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm'],
-    ['entree', 'w', 'x', 'c', 'v', 'b', 'n', 'retour'],
+    ['w', 'x', 'c', 'v', 'b', 'n'],
+    ['retour', 'entree'],
   ];
 
   const EMOJIS = {
@@ -158,9 +161,10 @@
   }
 
   function construireClavier() {
-    CLAVIER.forEach(function (rangee) {
+    CLAVIER.forEach(function (rangee, index) {
       const divRangee = document.createElement('div');
-      divRangee.className = 'clavier-ligne';
+      divRangee.className =
+        'clavier-ligne' + (index === CLAVIER.length - 1 ? ' clavier-ligne--actions' : '');
       rangee.forEach(function (cle) {
         const bouton = document.createElement('button');
         bouton.type = 'button';
@@ -168,11 +172,11 @@
         bouton.dataset.cle = cle;
         if (cle === 'entree') {
           bouton.textContent = 'Entrée';
-          bouton.classList.add('touche--large');
+          bouton.classList.add('touche--entree');
         } else if (cle === 'retour') {
-          bouton.textContent = '⌫';
-          bouton.setAttribute('aria-label', 'Effacer');
-          bouton.classList.add('touche--large');
+          bouton.innerHTML = '⌫ <span class="touche-libelle">Effacer</span>';
+          bouton.setAttribute('aria-label', 'Effacer la dernière lettre');
+          bouton.classList.add('touche--retour');
         } else {
           bouton.textContent = cle;
           bouton.setAttribute('aria-label', 'lettre ' + cle);

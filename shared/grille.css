@@ -124,34 +124,55 @@ main {
 
 /* ---------- Saisie ---------- */
 
-.saisie-zone {
+.colonne-jeu {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   width: min(92vw, 20rem);
 }
 
+/* Au dessus de la grille, assez grande pour être lue d'un coup d'œil pendant
+   qu'on trace le mot du doigt. */
 .saisie {
-  flex: 1;
-  min-height: 2.9rem;
-  display: grid;
-  place-items: center;
-  padding: 4px 10px;
-  font-family: var(--police-mots);
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  width: 100%;
+  min-height: 4.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 12px;
   background: var(--fond-doux);
   border: 1px dashed var(--bord-fort);
   border-radius: var(--rayon);
-  word-break: break-all;
 }
 
-.saisie--vide::before {
+.saisie-mot {
+  font-family: var(--police-mots);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  word-break: break-all;
+  text-align: center;
+}
+
+.saisie-compte {
+  font-size: 0.78rem;
+  color: var(--texte-doux);
+  min-height: 1.1em;
+}
+
+.saisie-compte--vide {
+  color: #c9452b;
+}
+
+.saisie--vide .saisie-mot::before {
   content: attr(data-invite);
   font-family: var(--police);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
@@ -174,7 +195,25 @@ main {
 
 .boutons-saisie {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
+}
+
+.boutons-saisie .jm-bouton {
+  height: 3.1rem;
+  font-size: 1rem;
+}
+
+.boutons-saisie #btn-effacer {
+  flex: 1 1 0;
+}
+
+.boutons-saisie #btn-valider {
+  flex: 2 1 0;
+}
+
+.bouton-libelle {
+  font-size: 0.9rem;
 }
 
 /* ---------- Liste des mots trouvés ---------- */
@@ -210,6 +249,24 @@ main {
 .mot-trouve b {
   font-size: 0.72rem;
   color: var(--accent);
+}
+
+/* Le mot de la liste qui commence comme la saisie en cours. */
+.mot-trouve--rappel {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mot-trouve--rappel b {
+  color: #fff;
+}
+
+.mot-trouve mark {
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 700;
 }
 
 /* ---------- Écran de départ ---------- */
@@ -336,15 +393,13 @@ main {
     align-content: start;
     column-gap: 28px;
   }
-  .grille {
+  .colonne-jeu {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1 / span 2;
     width: min(22rem, 42vw);
   }
-  .saisie-zone {
-    grid-column: 1;
-    grid-row: 2;
-    width: min(22rem, 42vw);
+  .grille {
+    width: 100%;
   }
   .trouves {
     grid-column: 2;

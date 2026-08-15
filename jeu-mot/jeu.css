@@ -182,13 +182,50 @@ main {
   filter: brightness(0.92);
 }
 
-.touche--large {
-  flex: 1.6 1 auto;
-  max-width: 5.2rem;
-  padding: 0 4px;
-  font-size: 0.78rem;
+.clavier-ligne--actions {
+  margin-top: 4px;
+  gap: 8px;
+}
+
+.clavier-ligne--actions .touche {
+  height: 3.5rem;
+  max-width: none;
   text-transform: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  font-size: 1rem;
+}
+
+/* La touche d'action principale, large et colorée : c'est le geste que le
+   joueur répète six fois par partie. */
+.touche--entree {
+  flex: 2.2 1 0;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.touche--entree:active {
+  filter: brightness(0.94);
+}
+
+.touche--retour {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.touche-libelle {
+  font-size: 0.82rem;
+  color: var(--texte-doux);
+}
+
+@media (max-width: 340px) {
+  .touche-libelle {
+    display: none;
+  }
 }
 
 .touche--juste,

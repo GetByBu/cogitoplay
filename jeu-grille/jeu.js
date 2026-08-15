@@ -29,6 +29,11 @@ JM.demarrerJeuGrille({
   voyellesMin: 5,
   voyellesMax: 7,
 
+  // Cible de victoire : 30 % du score maximum de la grille. Le maximum suppose
+  // d'avoir trouvé les 70 mots ou plus que cache une grille, ce que personne ne
+  // fait ; la cible, elle, se joue.
+  partCible: 0.3,
+
   langue: 'fr',
   textes: {
     fr: {
@@ -51,6 +56,11 @@ JM.demarrerJeuGrille({
       voirTout: function (nombre) {
         return `Voir les ${nombre} autres`;
       },
+      motsPossibles: function (nombre) {
+        if (nombre === 0) return 'aucun mot à trouver ainsi';
+        return nombre === 1 ? '1 mot possible' : `${nombre} mots possibles`;
+      },
+      progression: { cible: 'cible', max: 'max', points: 'pts' },
       partage: function (numero, score, mots, total) {
         return `Grille de lettres n°${numero} — ${score} points, ${mots} mots sur ${total}`;
       },
