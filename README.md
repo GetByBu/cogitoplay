@@ -171,6 +171,11 @@ des résidus de noms propres. Deux garde-fous côté jeu :
 - Chaque jeu expose une constante `MOTS_EXCLUS` pour écarter au cas par cas un
   mot repéré à l'usage.
 
+Sur les grilles, reprendre une partie et consulter les mots manqués s'excluent :
+tant que la reprise reste possible, la liste est remplacée par un bouton qui
+annonce ce qu'il coûte. L'ouvrir clôt la partie pour de bon, et le choix est
+mémorisé — recharger la page ne rend pas la reprise.
+
 Les grilles démarrent en **mode libre** ; le chrono de trois minutes est une
 case à cocher sur l'écran de départ. La zone de saisie, posée au dessus de la
 grille, annonce au fil de la frappe combien de mots restent à trouver derrière

@@ -57,6 +57,7 @@
       numeroJour: 0,
       minuterie: null,
       scoreMax: 0,
+      revele: false, // la liste des mots ratés a-t-elle été ouverte ?
       pastilles: new Map(), // mot -> <li>, pour surligner un mot déjà trouvé
     };
 
@@ -492,12 +493,17 @@
       const palier = (langue === 'en' ? JM.progression.PALIERS_EN : JM.progression.PALIERS_FR)[infos.palier];
       document.getElementById('fin-mot').textContent = palier.emoji + ' ' + palier.mot;
 
-      // « Reprendre » n'a de sens que si la partie n'était pas chronométrée :
-      // avec chrono, le temps est arrêté et la reprise fausserait le score.
-      document.getElementById('btn-reprendre').hidden = enCours || etat.chrono;
+      // Reprendre et connaître les mots manquants s'excluent : lire la liste
+      // puis retourner les saisir ne serait plus jouer. Tant que la reprise
+      // reste possible — partie libre, liste jamais ouverte — la liste est
+      // remplacée par un bouton qui prévient de ce qu'il coûte.
+      const peutReprendre = !enCours && !etat.chrono && !etat.revele;
+      document.getElementById('btn-reprendre').hidden = !peutReprendre;
+      document.getElementById('fin-devoiler-bloc').hidden = !peutReprendre;
+      document.getElementById('fin-restants-bloc').hidden = !!enCours || peutReprendre;
 
-      if (enCours) {
-        el.modaleFin.showModal();
+      if (enCours || peutReprendre) {
+        if (!el.modaleFin.open) el.modaleFin.showModal();
         return;
       }
 
@@ -541,6 +547,7 @@
         chrono: etat.chrono,
         restant: etat.restant,
         demarre: etat.demarre,
+        revele: etat.revele,
       });
     }
 
@@ -558,6 +565,7 @@
 
       etat.motsTrouves = partie.mots || [];
       etat.score = partie.score || 0;
+      etat.revele = !!partie.revele;
       etat.motsTrouves.forEach(function (mot) {
         el.liste.insertBefore(creerPastille(mot, JM.grille.points(mot)), el.liste.firstChild);
       });
@@ -633,6 +641,12 @@
       }).then(function (accepte) {
         if (accepte) terminer();
       });
+    });
+
+    document.getElementById('btn-devoiler').addEventListener('click', function () {
+      etat.revele = true;
+      sauvegarder();
+      ouvrirFin(false);
     });
 
     /** Retour à la grille depuis l'écran de fin, en mode libre uniquement. */

@@ -157,6 +157,15 @@
           Out of <b id="fin-total">0</b> possible words, worth <b id="fin-max">0</b> points at most.
         </p>
 
+        <div id="fin-devoiler-bloc" hidden>
+          <p style="text-align: center; margin: 18px 0 6px">
+            <button class="jm-bouton" id="btn-devoiler">Show the words I missed</button>
+          </p>
+          <p class="jm-note" style="text-align: center">
+            Once the list is open, the game can no longer be resumed.
+          </p>
+        </div>
+
         <div id="fin-restants-bloc">
           <h3>The longest ones you missed</h3>
           <ul class="restants" id="fin-restants"></ul>
@@ -185,7 +194,7 @@
     <script src="../shared/storage.js?v=7"></script>
     <script src="../shared/dico.js?v=7"></script>
     <script src="../shared/grille.js?v=7"></script>
-    <script src="../shared/grille-ui.js?v=7"></script>
+    <script src="../shared/grille-ui.js?v=8"></script>
     <script src="jeu.js?v=7"></script>
   </body>
 </html>
