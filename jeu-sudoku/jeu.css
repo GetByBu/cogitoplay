@@ -341,3 +341,8 @@ main {
     color: #f08a6d;
   }
 }
+
+.ligne-boutons {
+  margin-top: 18px;
+  text-align: center;
+}

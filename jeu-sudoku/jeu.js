@@ -657,6 +657,21 @@
     el.modaleAide.showModal();
   });
 
+  document.getElementById('btn-effacer-donnees').addEventListener('click', function () {
+    JM.confirme({
+      titre: 'Effacer vos données ?',
+      texte:
+        'La grille en cours, vos records et vos indices du jour seront supprimés — sur ce jeu ' +
+        'comme sur les quatre autres.',
+      annuler: 'Annuler',
+      ok: 'Effacer',
+    }).then(function (accepte) {
+      if (!accepte) return;
+      JM.storage.toutEffacer();
+      location.reload();
+    });
+  });
+
   document.getElementById('btn-recommencer').addEventListener('click', function () {
     JM.confirme({
       titre: 'Recommencer cette grille ?',
