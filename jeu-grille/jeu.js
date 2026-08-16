@@ -72,8 +72,12 @@ JM.demarrerJeuGrille({
         return nombre === 1 ? '1 mot possible' : `${nombre} mots possibles`;
       },
       progression: { cible: 'cible', max: 'max', points: 'pts' },
-      partage: function (numero, score, mots, total) {
-        return `Grille de lettres n°${numero} — ${score} points, ${mots} mots sur ${total}`;
+      partage: function (d) {
+        return [
+          `Grille de lettres n°${d.numero} — ${d.score} points`,
+          `${d.barre} cible ${d.cible}`,
+          `${d.mots} mots sur ${d.total}`,
+        ];
       },
     },
   },

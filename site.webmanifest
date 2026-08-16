@@ -1,7 +1,7 @@
 {
   "name": "CogitoPlay",
   "short_name": "CogitoPlay",
-  "description": "Cinq jeux de réflexion. Aucun compte, aucune publicité, aucun suivi.",
+  "description": "Jeux de réflexion. Aucun compte, aucune publicité, aucun suivi.",
   "lang": "fr",
   "start_url": "/cogitoplay/",
   "scope": "/cogitoplay/",

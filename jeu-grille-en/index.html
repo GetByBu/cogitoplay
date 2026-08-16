@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Letter Grid — CogitoPlay</title>
     <meta name="description" content="Link neighbouring letters to build as many words as you can." />
+    <!-- Carte d'aperçu affichée par les messageries sous un lien partagé.
+         L'adresse doit être absolue : les robots qui lisent la page ne
+         savent pas résoudre un chemin relatif. C'est le seul endroit du
+         site où le domaine est écrit en dur — à corriger le jour du
+         déménagement, en même temps que le fichier CNAME. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CogitoPlay" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Letter Grid — CogitoPlay" />
+    <meta property="og:description" content="Link neighbouring letters to build as many words as you can." />
+    <meta property="og:url" content="https://getbybu.github.io/cogitoplay/jeu-grille-en/" />
+    <meta property="og:image" content="https://getbybu.github.io/cogitoplay/partage-1200x630.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CogitoPlay — jeux de réflexion" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
       // Amorce : pose le thème avant le premier affichage, sinon la page
       // clignote en clair une fraction de seconde avant de passer au sombre.
@@ -200,13 +216,14 @@
     </dialog>
 
     <script src="../shared/seed.js?v=7"></script>
-    <script src="../shared/message.js?v=7"></script>
+    <script src="../shared/message.js?v=8"></script>
     <script src="../shared/progression.js?v=8"></script>
     <script src="../shared/storage.js?v=7"></script>
-    <script src="../shared/theme.js?v=2"></script>
+    <script src="../shared/partage.js?v=1"></script>
+    <script src="../shared/theme.js?v=3"></script>
     <script src="../shared/dico.js?v=7"></script>
     <script src="../shared/grille.js?v=7"></script>
-    <script src="../shared/grille-ui.js?v=9"></script>
-    <script src="jeu.js?v=7"></script>
+    <script src="../shared/grille-ui.js?v=10"></script>
+    <script src="jeu.js?v=8"></script>
   </body>
 </html>

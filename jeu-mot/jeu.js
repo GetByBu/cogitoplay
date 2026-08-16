@@ -608,34 +608,8 @@
       })
       .join('\n');
 
-    copier(entete + '\n' + grille);
-  });
-
-  function copier(texte) {
-    function secours() {
-      const zone = document.createElement('textarea');
-      zone.value = texte;
-      zone.setAttribute('readonly', '');
-      zone.style.position = 'fixed';
-      zone.style.opacity = '0';
-      document.body.appendChild(zone);
-      zone.select();
-      let ok = false;
-      try {
-        ok = document.execCommand('copy');
-      } catch (e) {
-        ok = false;
-      }
-      zone.remove();
+    JM.partage.copier(JM.partage.composer([entete, grille])).then(function (ok) {
       message(ok ? 'Résultat copié' : 'Copie impossible');
-    }
-
-    if (navigator.clipboard && location.protocol !== 'file:') {
-      navigator.clipboard.writeText(texte).then(function () {
-        message('Résultat copié');
-      }, secours);
-    } else {
-      secours();
-    }
-  }
+    });
+  });
 })();

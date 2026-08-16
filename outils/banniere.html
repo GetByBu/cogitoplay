@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bannière de partage — outil</title>
+    <style>
+      body {
+        font: 15px ui-sans-serif, system-ui, sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0 16px;
+        color: #201d18;
+      }
+      canvas {
+        width: 100%;
+        height: auto;
+        border: 1px solid #d8d2c6;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bannière de partage</h1>
+    <p>
+      Dessine l’image d’aperçu (1200 × 630) que les messageries affichent sous un lien partagé.
+      Le sceau est tracé depuis le même chemin SVG que le logo du site : si le logo change, cette
+      image se régénère à l’identique. Le résultat se télécharge ci-dessous, à enregistrer sous
+      <code>partage-1200x630.png</code> à la racine.
+    </p>
+
+    <canvas id="toile" width="1200" height="630"></canvas>
+    <p><a id="lien" download="partage-1200x630.png">Télécharger l’image</a></p>
+
+    <script>
+      // Les couleurs du thème clair, celui de l'identité du site.
+      const FOND = '#fbfaf7';
+      const ACCENT = '#b4531f';
+      const ENCRE = '#201d18';
+      const DOUX = '#6b6559';
+      const POLICE = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+      // Le sceau, repris tel quel de l'en-tête du site.
+      const SCEAU =
+        'M 413.60,132.87 A 200,200 0 1,0 413.60,379.13 L 348.99,328.65 ' +
+        'A 118,118 0 1,1 348.99,183.35 Z';
+      const VUE = { x: 36, y: 36, taille: 440 }; // viewBox du logo
+      const DECALAGE = -7; // le translate(-7,0) du groupe
+
+      const toile = document.getElementById('toile');
+      const c = toile.getContext('2d');
+
+      c.fillStyle = FOND;
+      c.fillRect(0, 0, 1200, 630);
+
+      const TAILLE_SCEAU = 150;
+      const CORPS = 122;
+      const ECART = 34;
+
+      c.font = '650 ' + CORPS + 'px ' + POLICE;
+      const largeurMot = c.measureText('CogitoPlay').width;
+      const largeurTotale = TAILLE_SCEAU + ECART + largeurMot;
+      const gauche = (1200 - largeurTotale) / 2;
+      // Le bloc entier (sceau, nom, deux lignes) est centré verticalement :
+      // calé sur le milieu de la toile, il paraissait tomber vers le bas.
+      const milieu = 250;
+
+      // Le sceau : on remet le chemin à l'échelle voulue.
+      c.save();
+      c.translate(gauche, milieu - TAILLE_SCEAU / 2);
+      const echelle = TAILLE_SCEAU / VUE.taille;
+      c.scale(echelle, echelle);
+      c.translate(-VUE.x + DECALAGE, -VUE.y);
+      c.fillStyle = ACCENT;
+      c.fill(new Path2D(SCEAU), 'evenodd');
+      c.beginPath();
+      c.arc(415, 256, 55, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
+
+      c.fillStyle = ENCRE;
+      c.textBaseline = 'middle';
+      c.fillText('CogitoPlay', gauche + TAILLE_SCEAU + ECART, milieu);
+
+      c.font = '400 40px ' + POLICE;
+      c.fillStyle = DOUX;
+      c.textAlign = 'center';
+      c.fillText('Jeux de réflexion, à jouer chaque jour', 600, 380);
+      c.font = '400 34px ' + POLICE;
+      c.fillText('Aucun compte, aucune publicité, aucun suivi', 600, 440);
+
+      const donnees = toile.toDataURL('image/png');
+      document.getElementById('lien').href = donnees;
+      window.__png = donnees;
+    </script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 /*
- * message.js — retours transitoires et confirmations, communs aux cinq jeux.
+ * message.js — retours transitoires et confirmations, communs à tous les jeux.
  *
  * Un seul message à la fois : le suivant remplace le précédent dans le même
  * nœud. Empilés, ils recouvraient le compteur de mots et la barre de

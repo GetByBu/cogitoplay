@@ -133,7 +133,7 @@
         titre: 'Effacer vos données ?',
         texte:
           'Toutes vos parties en cours, scores et records seront supprimés de cet appareil, ' +
-          'sur les cinq jeux.',
+          'sur tous les jeux.',
         annuler: 'Annuler',
         ok: 'Effacer',
       }).then(function (accepte) {

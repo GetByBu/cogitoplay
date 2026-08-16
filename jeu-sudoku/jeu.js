@@ -739,6 +739,8 @@
       ? '🏆 Sans faute, chapeau.'
       : '🎉 Grille résolue.';
     document.getElementById('btn-rejouer').hidden = !etat.perdu;
+    // Rien à partager d'une grille perdue : on ne propose que la réussite.
+    document.getElementById('btn-partager').hidden = etat.perdu;
 
     el.modaleFin.showModal();
   }
@@ -822,6 +824,19 @@
     el.modaleFin.close();
     JM.storage.effacer(CLE_PARTIE);
     demarrerNiveau(etat.niveau);
+  });
+
+  document.getElementById('btn-partager').addEventListener('click', function () {
+    const texte = JM.partage.composer([
+      `Sudoku n°${etat.numeroJour + 1} — ${NIVEAUX[etat.niveau].nom.toLowerCase()}`,
+      etat.erreurs === 0
+        ? `🏆 Résolu en ${formatDuree(etat.secondes)}, sans faute`
+        : `Résolu en ${formatDuree(etat.secondes)}, ` +
+          `${etat.erreurs} erreur${etat.erreurs > 1 ? 's' : ''}`,
+    ]);
+    JM.partage.copier(texte).then(function (ok) {
+      message(ok ? 'Résultat copié' : 'Copie impossible', ok ? 'succes' : 'refus');
+    });
   });
 
   document.getElementById('btn-aide').addEventListener('click', function () {

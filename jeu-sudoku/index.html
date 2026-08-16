@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Sudoku — CogitoPlay</title>
     <meta name="description" content="La grille de sudoku du jour, en trois niveaux." />
+    <!-- Carte d'aperçu affichée par les messageries sous un lien partagé.
+         L'adresse doit être absolue : les robots qui lisent la page ne
+         savent pas résoudre un chemin relatif. C'est le seul endroit du
+         site où le domaine est écrit en dur — à corriger le jour du
+         déménagement, en même temps que le fichier CNAME. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CogitoPlay" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Sudoku — CogitoPlay" />
+    <meta property="og:description" content="La grille de sudoku du jour, en trois niveaux." />
+    <meta property="og:url" content="https://getbybu.github.io/cogitoplay/jeu-sudoku/" />
+    <meta property="og:image" content="https://getbybu.github.io/cogitoplay/partage-1200x630.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CogitoPlay — jeux de réflexion" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script>
       // Amorce : pose le thème avant le premier affichage, sinon la page
       // clignote en clair une fraction de seconde avant de passer au sombre.
@@ -160,6 +176,7 @@
           <button class="jm-bouton jm-bouton--principal" id="btn-rejouer" hidden>
             Recommencer cette grille
           </button>
+          <button class="jm-bouton" id="btn-partager" hidden>Copier mon résultat</button>
           <a class="jm-bouton" href="../index.html">Les autres jeux</a>
         </div>
       </div>
@@ -167,9 +184,10 @@
 
     <script src="../shared/seed.js?v=7"></script>
     <script src="techniques.js?v=16"></script>
-    <script src="../shared/message.js?v=7"></script>
+    <script src="../shared/message.js?v=8"></script>
     <script src="../shared/storage.js?v=7"></script>
-    <script src="../shared/theme.js?v=2"></script>
-    <script src="jeu.js?v=17"></script>
+    <script src="../shared/partage.js?v=1"></script>
+    <script src="../shared/theme.js?v=3"></script>
+    <script src="jeu.js?v=18"></script>
   </body>
 </html>

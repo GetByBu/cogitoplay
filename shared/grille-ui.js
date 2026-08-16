@@ -680,41 +680,21 @@
     });
 
     document.getElementById('btn-partager').addEventListener('click', function () {
-      const texte = T.partage(
-        etat.numeroJour + 1,
-        etat.score,
-        etat.motsTrouves.length,
-        etat.solution.size
+      const infos = progression.etat(etat.score, etat.scoreMax);
+      const texte = JM.partage.composer(
+        T.partage({
+          numero: etat.numeroJour + 1,
+          score: etat.score,
+          mots: etat.motsTrouves.length,
+          total: etat.solution.size,
+          cible: infos.cible,
+          barre: JM.partage.barre(etat.score / infos.cible),
+        })
       );
-      copier(texte);
-    });
-
-    function copier(texte) {
-      function secours() {
-        const zone = document.createElement('textarea');
-        zone.value = texte;
-        zone.setAttribute('readonly', '');
-        zone.style.position = 'fixed';
-        zone.style.opacity = '0';
-        document.body.appendChild(zone);
-        zone.select();
-        let ok = false;
-        try {
-          ok = document.execCommand('copy');
-        } catch (e) {
-          ok = false;
-        }
-        zone.remove();
+      JM.partage.copier(texte).then(function (ok) {
         message(ok ? T.copie : T.copieRatee, ok ? 'succes' : 'refus');
-      }
-      if (navigator.clipboard && location.protocol !== 'file:') {
-        navigator.clipboard.writeText(texte).then(function () {
-          message(T.copie, 'succes');
-        }, secours);
-      } else {
-        secours();
-      }
-    }
+      });
+    });
 
     function echapper(texte) {
       const div = document.createElement('div');

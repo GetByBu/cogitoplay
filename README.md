@@ -30,6 +30,21 @@ Site statique servi tel quel par GitHub Pages depuis la racine de la branche
   avant que le domaine ne résolve rend le site injoignable, GitHub redirigeant
   vers un domaine qui n'existe pas encore.
 
+### À changer le jour du déménagement
+
+Avec un domaine, GitHub sert le site **à la racine** (`cogitoplay.com/`) et non
+plus sous `/cogitoplay/`. Tout ce qui écrit ce chemin en dur casse ce jour-là.
+Liste complète :
+
+- les balises `og:url` et `og:image` des six pages (les robots des messageries
+  ne savent pas résoudre un chemin relatif : l'adresse doit y être absolue) ;
+- les `<link rel="icon">`, `apple-touch-icon` et `manifest` des six pages, qui
+  pointent vers `/cogitoplay/…` ;
+- `start_url` et `scope` dans `site.webmanifest`.
+
+Le texte du bouton « Copier mon résultat » n'est **pas** concerné : il lit
+l'adresse là où la page se trouve (voir *Partage*).
+
 ### Cache et numéro de version
 
 Les feuilles de style et les scripts sont appelés avec un suffixe `?v=N` dans
@@ -132,6 +147,9 @@ des trouvailles automatiques.
   deux repères (une **cible** atteignable qui vaut victoire, le **maximum** que
   presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre
   au delà — chacun avec son émoticône et son mot d'encouragement.
+- `partage.js` — le texte du bouton « Copier mon résultat », commun à tous les
+  jeux, et la copie elle-même (l'API moderne, avec repli sur un champ caché pour
+  les vieux navigateurs et le protocole `file://`).
 - `storage.js` — accès `localStorage` tolérant au mode privé.
 - `style-commun.css` — les **jetons de couleur** dont tout le site est peint,
   puis l'en-tête, les boutons et les modales. Aucune couleur n'est écrite en dur
@@ -172,6 +190,46 @@ Chaque paire de couleurs a été mesurée avant d'être retenue : minimum 4,5 po
 tout ce qui porte du texte, 3 pour les bordures. C'est ce qui a imposé
 `--etat-texte-present` — sur le jaune vif du thème, du blanc tombait à 2,3 de
 contraste, contre 7,7 pour l'encre du site.
+
+## Partage
+
+Chaque jeu copie un résultat portant le nom du site en tête et **son adresse en
+pied**. Sans ce lien, le partage est un cul-de-sac : celui qui le reçoit voit le
+résultat, n'a rien à cliquer, et le jeu s'arrête là — c'était le cas des cinq
+jeux jusqu'ici, alors que c'est le seul mécanisme par lequel le site se fait
+connaître.
+
+L'adresse n'est pas écrite en dur : elle est **lue là où la page se trouve**
+(`location`). Le jour où le site déménage sur `cogitoplay.com`, les partages
+suivent seuls ; sinon on distribuerait des liens vers l'ancienne adresse pendant
+des mois sans s'en apercevoir.
+
+Une image ne peut pas voyager dans le presse-papier : les messageries ne
+reçoivent que des caractères. Le logo apparaît donc là où il est le plus
+visible — la **carte d'aperçu** que WhatsApp, Signal, Discord ou iMessage
+affichent sous un lien collé. Elle demande les balises Open Graph des six pages
+et l'image `partage-1200x630.png`, dessinée par `outils/banniere.html` à partir
+du chemin SVG du logo lui-même : si le logo change, la bannière se régénère à
+l'identique. Cet aperçu est fabriqué par les serveurs de la messagerie, qui
+lisent une page publique — rien n'est ajouté aux pages, et l'appareil du joueur
+n'appelle personne.
+
+**Aucun texte destiné au joueur ne compte les jeux.** Une image partagée est
+mise en cache des semaines par les messageries : le jour où un jeu s'ajoute, un
+chiffre devenu faux continuerait de s'afficher dans toutes les conversations où
+l'aperçu a déjà été chargé — là, précisément, où on ne peut plus le corriger. La
+bannière et l'accroche de l'accueil portent donc la même phrase, sans décompte :
+« Jeux de réflexion, à jouer chaque jour ». Idem pour la description et le
+manifeste. Seule la description de recherche **nomme** les jeux, ce qui aide à
+être trouvé et vieillit sans dommage : un jeu absent d'une énumération se lit
+comme un exemple de moins, pas comme une erreur.
+
+Le mot mystère se partage bien parce qu'on **voit** la partie. Une phrase de
+statistiques, personne ne la transmet : les trois autres jeux à score reçoivent
+donc une barre de dix carrés montrant où en est le joueur de la cible, dans les
+couleurs de la palette choisie. Le sudoku, qui n'avait aucun partage, en a un
+désormais — niveau, temps, erreurs — proposé seulement quand la grille est
+résolue : il n'y a rien à partager d'une partie perdue.
 
 ## Données stockées
 

@@ -534,39 +534,15 @@
 
   document.getElementById('btn-partager').addEventListener('click', function () {
     const infos = progression.etat(etat.score, etat.scoreMax);
-    copier(
-      `Fleur de lettres n°${etat.periode + 1} — ${etat.score} points ` +
-        `(cible ${infos.cible}, max ${etat.scoreMax}), ` +
-        `${etat.motsTrouves.length} mots sur ${etat.solution.length}`
-    );
-  });
-
-  function copier(texte) {
-    function secours() {
-      const zone = document.createElement('textarea');
-      zone.value = texte;
-      zone.setAttribute('readonly', '');
-      zone.style.position = 'fixed';
-      zone.style.opacity = '0';
-      document.body.appendChild(zone);
-      zone.select();
-      let ok = false;
-      try {
-        ok = document.execCommand('copy');
-      } catch (e) {
-        ok = false;
-      }
-      zone.remove();
+    const texte = JM.partage.composer([
+      `Fleur de lettres n°${etat.periode + 1} — ${etat.score} points`,
+      `${JM.partage.barre(etat.score / infos.cible)} cible ${infos.cible}`,
+      `${etat.motsTrouves.length} mots sur ${etat.solution.length}`,
+    ]);
+    JM.partage.copier(texte).then(function (ok) {
       message(ok ? 'Résultat copié' : 'Copie impossible', ok ? 'succes' : 'refus');
-    }
-    if (navigator.clipboard && location.protocol !== 'file:') {
-      navigator.clipboard.writeText(texte).then(function () {
-        message('Résultat copié', 'succes');
-      }, secours);
-    } else {
-      secours();
-    }
-  }
+    });
+  });
 
   function echapper(texte) {
     const div = document.createElement('div');
