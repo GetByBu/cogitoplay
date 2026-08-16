@@ -585,28 +585,6 @@
     });
   });
 
-  const optPalette = document.getElementById('opt-palette');
-  optPalette.checked = JM.prefs.lire().palette === 'distincte';
-  optPalette.addEventListener('change', function () {
-    const prefs = JM.prefs.lire();
-    prefs.palette = optPalette.checked ? 'distincte' : 'standard';
-    JM.prefs.ecrire(prefs);
-    JM.prefs.appliquer();
-  });
-
-  document.getElementById('btn-effacer').addEventListener('click', function () {
-    JM.confirme({
-      titre: 'Effacer vos données ?',
-      texte: 'La partie en cours et toutes vos statistiques seront supprimées de cet appareil.',
-      annuler: 'Annuler',
-      ok: 'Effacer',
-    }).then(function (accepte) {
-      if (!accepte) return;
-      JM.storage.toutEffacer();
-      location.reload();
-    });
-  });
-
   // ---------------------------------------------------------------- Partage
 
   document.getElementById('btn-partager').addEventListener('click', function () {

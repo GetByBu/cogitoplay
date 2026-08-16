@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CogitoPlay</title>
     <meta name="description" content="Cinq jeux dans le navigateur : mot mystère, grilles de lettres, fleur de lettres, sudoku." />
+    <script>
+      // Amorce : pose le thème avant le premier affichage, sinon la page
+      // clignote en clair une fraction de seconde avant de passer au sombre.
+      try {
+        var p = JSON.parse(localStorage.getItem('jm.prefs.v1') || '{}');
+        var t = p.theme || 'auto';
+        if (t === 'auto') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'sombre' : 'clair';
+        }
+        document.documentElement.dataset.theme = t;
+        if (p.palette) document.documentElement.dataset.palette = p.palette;
+      } catch (e) {}
+    </script>
     <link rel="icon" href="/cogitoplay/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/cogitoplay/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/cogitoplay/apple-touch-icon.png" />
     <link rel="manifest" href="/cogitoplay/site.webmanifest" />
     <meta name="theme-color" content="#FBFAF7" />
-    <link rel="stylesheet" href="shared/style-commun.css?v=9" />
+    <link rel="stylesheet" href="shared/style-commun.css?v=11" />
     <style>
       .accueil {
         max-width: 640px;
@@ -63,7 +76,8 @@
   </head>
   <body>
     <div class="accueil">
-      <h1 class="titre-sceau">
+      <div class="entete-accueil">
+        <h1 class="titre-sceau">
         <svg class="sceau" viewBox="36 36 440 440" aria-hidden="true" focusable="false">
           <g transform="translate(-7,0)">
             <path
@@ -74,8 +88,10 @@
             <circle fill="currentColor" cx="415" cy="256" r="55" />
           </g>
         </svg>
-        CogitoPlay
-      </h1>
+          CogitoPlay
+        </h1>
+        <button class="jm-bouton jm-bouton--icone" data-reglages aria-label="Réglages" title="Réglages">⚙</button>
+      </div>
       <p class="jm-note">
         Cinq jeux. Aucun compte, aucune publicité, aucun suivi&#8239;: tout se passe dans
         votre navigateur.
@@ -119,5 +135,9 @@
         <a href="shared/dictionnaires/LICENCES_ET_SOURCES.md">LICENCES_ET_SOURCES.md</a>.
       </p>
     </div>
+
+    <script src="shared/storage.js?v=7"></script>
+    <script src="shared/message.js?v=7"></script>
+    <script src="shared/theme.js?v=1"></script>
   </body>
 </html>

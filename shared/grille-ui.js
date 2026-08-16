@@ -689,19 +689,6 @@
       copier(texte);
     });
 
-    document.getElementById('btn-effacer-donnees').addEventListener('click', function () {
-      JM.confirme({
-        titre: T.confirmerEffacementTitre,
-        texte: T.confirmerEffacement,
-        annuler: T.annuler,
-        ok: T.effacer,
-      }).then(function (accepte) {
-        if (!accepte) return;
-        JM.storage.toutEffacer();
-        location.reload();
-      });
-    });
-
     function copier(texte) {
       function secours() {
         const zone = document.createElement('textarea');

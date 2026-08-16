@@ -1,7 +1,8 @@
 /*
  * style-commun.css — jetons de couleur, typo et composants partagés
  * (en-tête, boutons, fenêtres modales, messages).
- * Thème clair par défaut, thème sombre suivant les préférences système.
+ * Thème clair par défaut ; les autres thèmes redéfinissent les mêmes jetons,
+ * choisis par le joueur dans les réglages.
  */
 
 :root {
@@ -34,43 +35,48 @@
   --police-mots: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
 }
 
-/* Palette alternative pour daltonisme deutan/protan : bleu et orange. */
+/*
+ * Le thème est toujours concret sur la page : le script d'amorce, en tête de
+ * chaque document, a déjà résolu « automatique » en clair ou sombre. Pas de
+ * règle média ici, donc, et pas de couleurs écrites deux fois.
+ */
+:root[data-theme='sombre'] {
+  --fond: #16150f;
+  --fond-carte: #211f18;
+  --fond-doux: #2c2a21;
+  --texte: #f0ece2;
+  --texte-doux: #a49d8d;
+  --bord: #3b382d;
+  --bord-fort: #57533f;
+  --accent: #e08a4d;
+  --accent-doux: #33261b;
+  --ombre: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  --etat-juste: #58a05e;
+  --etat-present: #c99a2c;
+  --etat-absent: #57533f;
+  --etat-texte: #12110c;
+  /* Sur le gris sombre des lettres absentes, seul un texte clair reste lisible. */
+  --etat-texte-absent: #e6e1d5;
+  /* L'accent sombre est un orange clair : du blanc dessus tombait à 2,65 de
+     contraste, sous le minimum. L'encre du site y tient 6,21. */
+  --sur-accent: #211f18;
+  --alerte: #f08a6d;
+  --alerte-sur-accent: #4a1409;
+}
+
+/* Les palettes de lisibilité viennent après les thèmes : à spécificité égale,
+   c'est l'ordre qui tranche, et le choix du joueur doit l'emporter. */
 :root[data-palette='distincte'] {
   --etat-juste: #0d63c4;
   --etat-present: #e07b1a;
   --etat-absent: #8d8577;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fond: #16150f;
-    --fond-carte: #211f18;
-    --fond-doux: #2c2a21;
-    --texte: #f0ece2;
-    --texte-doux: #a49d8d;
-    --bord: #3b382d;
-    --bord-fort: #57533f;
-    --accent: #e08a4d;
-    --accent-doux: #33261b;
-    --ombre: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
-
-    --etat-juste: #58a05e;
-    --etat-present: #c99a2c;
-    --etat-absent: #57533f;
-    --etat-texte: #12110c;
-    /* Sur le gris sombre des lettres absentes, seul un texte clair reste lisible. */
-    --etat-texte-absent: #e6e1d5;
-    /* L'accent sombre est un orange clair : du blanc dessus tombait à 2,65 de
-       contraste, sous le minimum. L'encre du site y tient 6,21. */
-    --sur-accent: #211f18;
-    --alerte: #f08a6d;
-    --alerte-sur-accent: #4a1409;
-  }
-  :root[data-palette='distincte'] {
-    --etat-juste: #3d8ee0;
-    --etat-present: #e08a3a;
-    --etat-absent: #57533f;
-  }
+:root[data-theme='sombre'][data-palette='distincte'] {
+  --etat-juste: #3d8ee0;
+  --etat-present: #e08a3a;
+  --etat-absent: #57533f;
 }
 
 * {
@@ -431,4 +437,67 @@ a {
   width: 0.92em;
   height: 0.92em;
   color: var(--accent);
+}
+
+/* ---------- Choix du thème, dans les réglages ---------- */
+
+.choix-theme {
+  display: grid;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.theme-choix {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  text-align: left;
+  color: var(--texte);
+  background: var(--fond-carte);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  cursor: pointer;
+}
+
+.theme-choix:hover {
+  border-color: var(--bord-fort);
+}
+
+.theme-choix b {
+  flex: none;
+  font-weight: 650;
+}
+
+.theme-choix span {
+  font-size: 0.82rem;
+  color: var(--texte-doux);
+}
+
+.theme-choix--actif {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--sur-accent);
+}
+
+.theme-choix--actif span {
+  color: var(--sur-accent);
+  opacity: 0.85;
+}
+
+/* Case à cocher étiquetée. Définie ici parce que la fenêtre de réglages est
+   commune : elle s'ouvre depuis des pages qui n'ont pas la même feuille de jeu. */
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.option input {
+  flex: none;
+  margin: 0.25em 0 0;
 }

@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Sudoku — CogitoPlay</title>
     <meta name="description" content="La grille de sudoku du jour, en trois niveaux." />
+    <script>
+      // Amorce : pose le thème avant le premier affichage, sinon la page
+      // clignote en clair une fraction de seconde avant de passer au sombre.
+      try {
+        var p = JSON.parse(localStorage.getItem('jm.prefs.v1') || '{}');
+        var t = p.theme || 'auto';
+        if (t === 'auto') {
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'sombre' : 'clair';
+        }
+        document.documentElement.dataset.theme = t;
+        if (p.palette) document.documentElement.dataset.palette = p.palette;
+      } catch (e) {}
+    </script>
     <link rel="icon" href="/cogitoplay/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/cogitoplay/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/cogitoplay/apple-touch-icon.png" />
     <link rel="manifest" href="/cogitoplay/site.webmanifest" />
     <meta name="theme-color" content="#FBFAF7" />
-    <link rel="stylesheet" href="../shared/style-commun.css?v=9" />
+    <link rel="stylesheet" href="../shared/style-commun.css?v=11" />
     <link rel="stylesheet" href="jeu.css?v=17" />
   </head>
   <body>
@@ -122,9 +135,7 @@
         </p>
 
         <p class="ligne-boutons">
-          <button class="jm-bouton jm-bouton--discret" id="btn-effacer-donnees">
-            Effacer mes données
-          </button>
+          <button class="jm-bouton jm-bouton--discret" data-reglages>⚙ Réglages du site</button>
         </p>
       </div>
     </dialog>
@@ -158,6 +169,7 @@
     <script src="techniques.js?v=16"></script>
     <script src="../shared/message.js?v=7"></script>
     <script src="../shared/storage.js?v=7"></script>
-    <script src="jeu.js?v=16"></script>
+    <script src="../shared/theme.js?v=1"></script>
+    <script src="jeu.js?v=17"></script>
   </body>
 </html>

@@ -532,19 +532,6 @@
     });
   });
 
-  document.getElementById('btn-effacer-donnees').addEventListener('click', function () {
-    JM.confirme({
-      titre: 'Effacer vos données ?',
-      texte: 'Les mots trouvés et vos préférences seront supprimés de cet appareil.',
-      annuler: 'Annuler',
-      ok: 'Effacer',
-    }).then(function (accepte) {
-      if (!accepte) return;
-      JM.storage.toutEffacer();
-      location.reload();
-    });
-  });
-
   document.getElementById('btn-partager').addEventListener('click', function () {
     const infos = progression.etat(etat.score, etat.scoreMax);
     copier(
