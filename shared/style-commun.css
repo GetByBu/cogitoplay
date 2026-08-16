@@ -99,11 +99,13 @@
   --alerte-sur-accent: #ffe0ec;
 
   --etat-juste: #07875a;
-  --etat-present: #f0a202;
+  /* Le jaune de la bande elle-même, plutôt qu'un ambre qui ressemblait trop au
+     jaune des autres thèmes. */
+  --etat-present: #ffd400;
   --etat-absent: #7a7288;
   --etat-texte: #ffffff;
-  /* Le jaune est trop lumineux pour du blanc : 2,3 de contraste contre 7,7
-     avec l'encre du site. C'est la raison d'être de ce jeton. */
+  /* Le jaune est bien trop lumineux pour du blanc : 1,4 de contraste contre
+     11,4 avec l'encre du site. C'est la raison d'être de ce jeton. */
   --etat-texte-present: #241c33;
   --etat-texte-absent: #ffffff;
 
