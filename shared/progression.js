@@ -113,11 +113,25 @@
 
     const emoji = conteneur.querySelector('.progression-emoji');
     const texte = conteneur.querySelector('.progression-texte');
+    const piste = conteneur.querySelector('.progression-piste');
     const jauge = conteneur.querySelector('.progression-jauge');
     const repere = conteneur.querySelector('.progression-repere');
     const vueScore = conteneur.querySelector('.progression-score');
     const vueCible = conteneur.querySelector('.progression-cible');
     const vueMax = conteneur.querySelector('.progression-max');
+
+    /*
+     * Un thème peut poser un dégradé sur la jauge. Comme le motif est peint sur
+     * la jauge et non sur la piste, une largeur fixe le ferait se répéter avant
+     * le bout de la barre. On l'accorde donc à la piste : le dégradé se découvre
+     * alors exactement de bout en bout, à mesure qu'on progresse. Sans dégradé,
+     * cette taille ne s'applique à rien.
+     */
+    function calerLeDecor() {
+      const large = Math.round(piste.getBoundingClientRect().width);
+      if (large) jauge.style.backgroundSize = large + 'px 100%';
+    }
+    global.addEventListener('resize', calerLeDecor);
 
     let reglages = options || {};
 
@@ -137,6 +151,7 @@
         texte.textContent = palier.mot;
         jauge.style.width = infos.partJauge + '%';
         jauge.classList.toggle('progression-jauge--gagnee', infos.gagne);
+        calerLeDecor();
         repere.style.left = infos.partCible + '%';
         repere.title = (textes.cible || 'cible') + ' : ' + infos.cible;
 

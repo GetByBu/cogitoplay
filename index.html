@@ -23,7 +23,7 @@
     <link rel="apple-touch-icon" href="/cogitoplay/apple-touch-icon.png" />
     <link rel="manifest" href="/cogitoplay/site.webmanifest" />
     <meta name="theme-color" content="#FBFAF7" />
-    <link rel="stylesheet" href="shared/style-commun.css?v=11" />
+    <link rel="stylesheet" href="shared/style-commun.css?v=12" />
     <style>
       .accueil {
         max-width: 640px;
@@ -59,6 +59,26 @@
       }
       .carte-jeu:hover {
         border-color: var(--bord-fort);
+      }
+      /* L'accueil n'a pas d'en-tête où poser le liseré du thème arc-en-ciel :
+         ce sont les cartes qui le portent, une couleur chacune. */
+      :root[data-theme='arc'] .carte-jeu {
+        border-left-width: 5px;
+      }
+      :root[data-theme='arc'] .carte-jeu:nth-child(1) {
+        border-left-color: #e40303;
+      }
+      :root[data-theme='arc'] .carte-jeu:nth-child(2) {
+        border-left-color: #ff8c00;
+      }
+      :root[data-theme='arc'] .carte-jeu:nth-child(3) {
+        border-left-color: #e0a800;
+      }
+      :root[data-theme='arc'] .carte-jeu:nth-child(4) {
+        border-left-color: #008026;
+      }
+      :root[data-theme='arc'] .carte-jeu:nth-child(5) {
+        border-left-color: #24408e;
       }
       .carte-jeu[aria-disabled='true'] {
         opacity: 0.55;
@@ -146,6 +166,6 @@
 
     <script src="shared/storage.js?v=7"></script>
     <script src="shared/message.js?v=7"></script>
-    <script src="shared/theme.js?v=1"></script>
+    <script src="shared/theme.js?v=2"></script>
   </body>
 </html>

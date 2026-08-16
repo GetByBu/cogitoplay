@@ -20,10 +20,11 @@
     { cle: 'auto', nom: 'Automatique', note: 'suit le réglage de votre appareil' },
     { cle: 'clair', nom: 'Clair', note: 'papier et terracotta' },
     { cle: 'sombre', nom: 'Sombre', note: 'pour jouer le soir' },
+    { cle: 'arc', nom: 'Arc-en-ciel', note: 'toutes les couleurs, sans exception' },
   ];
 
   // Couleur de la barre du navigateur sur mobile, par thème concret.
-  const COULEUR_BARRE = { clair: '#fbfaf7', sombre: '#16150f' };
+  const COULEUR_BARRE = { clair: '#fbfaf7', sombre: '#16150f', arc: '#fdfbff' };
 
   function lire() {
     const prefs = JM.prefs.lire();

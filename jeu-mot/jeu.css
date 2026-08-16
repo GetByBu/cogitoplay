@@ -89,6 +89,7 @@ main {
 }
 .case--present {
   background: var(--etat-present);
+  color: var(--etat-texte-present);
 }
 .case--absent {
   background: var(--etat-absent);
@@ -240,6 +241,7 @@ main {
 }
 .touche--present {
   background: var(--etat-present);
+  color: var(--etat-texte-present);
 }
 .touche--absent {
   background: var(--etat-absent);

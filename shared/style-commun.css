@@ -29,6 +29,15 @@
   --etat-absent: #7d7568;
   --etat-texte: #ffffff;
   --etat-texte-absent: #ffffff;
+  /* La lettre « mal placée » suit la lettre « juste » par défaut, mais un thème
+     dont le jaune est vif doit pouvoir y poser de l'encre plutôt que du blanc.
+     Écrit en var(), ce jeton suit automatiquement chaque thème qui ne le
+     redéfinit pas : clair et sombre restent inchangés. */
+  --etat-texte-present: var(--etat-texte);
+
+  /* --decor-arc n'est volontairement pas déclaré ici : les rares endroits qui
+     l'emploient écrivent var(--decor-arc, none) et gardent donc leur aplat tant
+     qu'aucun thème ne pose de dégradé. */
 
   --rayon: 10px;
   --police: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -63,6 +72,50 @@
   --sur-accent: #211f18;
   --alerte: #f08a6d;
   --alerte-sur-accent: #4a1409;
+}
+
+/*
+ * Arc-en-ciel. Le dégradé ne peut pas servir de fond général : il rendrait le
+ * texte illisible et changerait de contraste selon l'endroit de l'écran. Il est
+ * donc réservé à trois traits décoratifs (--decor-arc), et le reste de la page
+ * est peint dans un violet franc, la teinte qui ferme la bande et qui supporte
+ * du blanc. Chaque paire a été mesurée : le minimum tombe à 4,5 sauf pour les
+ * bordures, décoratives, tenues à 3.
+ */
+:root[data-theme='arc'] {
+  --fond: #fdfbff;
+  --fond-carte: #ffffff;
+  --fond-doux: #f2ecfd;
+  --texte: #241c33;
+  --texte-doux: #665d78;
+  --bord: #e3daf5;
+  --bord-fort: #9b84c6;
+  --accent: #6a1fd0;
+  --accent-doux: #f0e7ff;
+  --ombre: 0 1px 2px rgba(58, 26, 105, 0.08), 0 8px 24px rgba(58, 26, 105, 0.1);
+
+  --sur-accent: #ffffff;
+  --alerte: #c2185b;
+  --alerte-sur-accent: #ffe0ec;
+
+  --etat-juste: #07875a;
+  --etat-present: #f0a202;
+  --etat-absent: #7a7288;
+  --etat-texte: #ffffff;
+  /* Le jaune est trop lumineux pour du blanc : 2,3 de contraste contre 7,7
+     avec l'encre du site. C'est la raison d'être de ce jeton. */
+  --etat-texte-present: #241c33;
+  --etat-texte-absent: #ffffff;
+
+  --decor-arc: linear-gradient(
+    90deg,
+    #e40303 0%,
+    #ff8c00 20%,
+    #ffd400 40%,
+    #008026 60%,
+    #24408e 80%,
+    #732982 100%
+  );
 }
 
 /* Les palettes de lisibilité viennent après les thèmes : à spécificité égale,
@@ -111,12 +164,25 @@ a {
 /* ---------- En-tête ---------- */
 
 .jm-entete {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
   border-bottom: 1px solid var(--bord);
   background: var(--fond-carte);
+}
+
+/* Le liseré du thème arc-en-ciel. Posé en absolu : sans dégradé à afficher, il
+   ne prend aucune place et ne décale rien dans les autres thèmes. */
+.jm-entete::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background-image: var(--decor-arc, none);
 }
 
 .jm-entete h1 {
@@ -359,12 +425,19 @@ a {
   height: 100%;
   width: 0;
   border-radius: 999px;
-  background: var(--accent);
-  transition: width 0.4s ease, background 0.3s ease;
+  background-color: var(--accent);
+  /* Une largeur, plutôt qu'un dégradé étiré sur la jauge : la bande se découvre
+     ainsi à mesure qu'on progresse, au lieu d'afficher toutes les couleurs
+     écrasées dans quelques pixels dès le premier mot trouvé. Cette valeur ne
+     sert qu'avant le premier affichage — progression.js la remplace ensuite par
+     la largeur mesurée de la piste. */
+  background-image: var(--decor-arc, none);
+  background-size: 280px 100%;
+  transition: width 0.4s ease, background-color 0.3s ease;
 }
 
 .progression-jauge--gagnee {
-  background: var(--etat-juste);
+  background-color: var(--etat-juste);
 }
 
 /* Le trait qui marque la cible à atteindre. */

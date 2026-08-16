@@ -39,7 +39,7 @@ mais garde l'ancien JavaScript en cache, et la page casse. Une seule commande
 suffit :
 
 ```bash
-sed -i '' 's/?v=6/?v=7/g' index.html jeu-*/index.html
+sed -i '' 's/?v=11/?v=12/g' index.html jeu-*/index.html
 ```
 
 GitHub Pages sert les fichiers texte compressés en gzip : les 5,5 Mo du
@@ -133,12 +133,45 @@ des trouvailles automatiques.
   presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre
   au delà — chacun avec son émoticône et son mot d'encouragement.
 - `storage.js` — accès `localStorage` tolérant au mode privé.
-- `style-commun.css` — les **24 jetons de couleur** dont tout le site est peint,
+- `style-commun.css` — les **jetons de couleur** dont tout le site est peint,
   puis l'en-tête, les boutons et les modales. Aucune couleur n'est écrite en dur
-  ailleurs : c'est ce qui permettra d'ajouter un thème en redéfinissant
-  seulement ces jetons. Deux d'entre eux existent précisément pour ça —
-  `--sur-accent`, le texte posé sur un aplat d'accent, et `--alerte` — car un
-  thème à accent clair rendrait illisible un blanc écrit en dur.
+  ailleurs : c'est ce qui permet d'ajouter un thème en redéfinissant seulement
+  ces jetons. Trois d'entre eux existent précisément pour ça — `--sur-accent`,
+  le texte posé sur un aplat d'accent, `--alerte`, et `--etat-texte-present`,
+  l'encre de la lettre mal placée — car un thème à accent ou à jaune clair
+  rendrait illisible un blanc écrit en dur.
+- `theme.js` — le thème choisi et la fenêtre de réglages (thème, contraste
+  renforcé, effacement des données), ouverte depuis l'accueil comme depuis
+  l'aide de chaque jeu.
+
+## Thèmes
+
+Quatre choix : **Automatique**, **Clair**, **Sombre**, **Arc-en-ciel**. Le choix
+du joueur peut valoir « automatique », mais la page porte toujours un thème
+concret : le script d'amorce, en tête de chaque document, résout « automatique »
+en clair ou sombre **avant le premier affichage**. Sans lui, une page sombre
+clignoterait en blanc au chargement. Conséquence pour la feuille de style :
+aucune règle média, et pas une couleur écrite deux fois. En mode automatique, un
+`matchMedia` suit les changements du système sans rechargement.
+
+Ajouter un thème tient donc en deux gestes : une entrée dans `THEMES`
+(`shared/theme.js`) et un bloc `:root[data-theme='…']` de jetons. C'est ainsi
+qu'a été ajouté l'arc-en-ciel.
+
+Un dégradé ne peut pas servir de fond général — il rendrait le texte illisible
+et le contraste varierait selon l'endroit de l'écran. L'arc-en-ciel est donc
+porté par un jeton à part, `--decor-arc`, que trois éléments seulement
+appliquent : le liseré sous l'en-tête, la jauge de progression et la bordure des
+cartes de l'accueil. Ces règles écrivent `var(--decor-arc, none)` et les autres
+thèmes gardent leur aplat sans rien savoir de ce jeton. La jauge accorde la
+largeur du dégradé à celle de la piste (`progression.js`) : la bande se découvre
+ainsi exactement de bout en bout à mesure qu'on progresse, au lieu de se répéter
+avant la fin.
+
+Chaque paire de couleurs a été mesurée avant d'être retenue : minimum 4,5 pour
+tout ce qui porte du texte, 3 pour les bordures. C'est ce qui a imposé
+`--etat-texte-present` — sur le jaune vif du thème, du blanc tombait à 2,3 de
+contraste, contre 7,7 pour l'encre du site.
 
 ## Données stockées
 
@@ -155,7 +188,7 @@ Uniquement dans le `localStorage` du navigateur, sous le préfixe `jm.` :
 | `jm.sudoku.v1` | grille du jour : niveau, chiffres posés, notes, temps, erreurs |
 | `jm.sudoku.stats.v1` | parties terminées et meilleur temps par niveau |
 | `jm.sudoku.indices.v1` | indices utilisés dans la journée (trois maximum) |
-| `jm.prefs.v1` | palette de couleurs et langue d'interface choisies |
+| `jm.prefs.v1` | thème, palette de contraste et langue d'interface choisis |
 
 Aucun identifiant, aucune donnée personnelle, rien ne sort de l'appareil. Le
 bouton « effacer mes données » de chaque jeu supprime toutes les clés `jm.`.
