@@ -101,7 +101,7 @@ main {
 
 .message--indice {
   background: var(--accent) !important;
-  color: #fff !important;
+  color: var(--sur-accent) !important;
   max-width: min(92vw, 26rem);
   text-align: center;
   white-space: normal;
@@ -165,7 +165,7 @@ main {
 
 .petale--centre {
   background: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
 }
 
 .petale--centre:hover {
@@ -275,12 +275,12 @@ main {
 
 .message--succes {
   background: var(--etat-juste) !important;
-  color: #fff !important;
+  color: var(--etat-texte) !important;
 }
 
 .message--pangramme {
   background: var(--accent) !important;
-  color: #fff !important;
+  color: var(--sur-accent) !important;
 }
 
 .message--refus {
@@ -322,12 +322,12 @@ main {
 
 .rangs .courant {
   background: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   font-weight: 650;
 }
 
 .rangs .courant span:last-child {
-  color: #fff;
+  color: var(--sur-accent);
 }
 
 .fin-actions {

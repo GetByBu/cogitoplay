@@ -133,8 +133,12 @@ des trouvailles automatiques.
   presque personne n'atteint) et douze paliers — huit jusqu'à la cible, quatre
   au delà — chacun avec son émoticône et son mot d'encouragement.
 - `storage.js` — accès `localStorage` tolérant au mode privé.
-- `style-commun.css` — variables de thème (clair/sombre), en-tête, boutons,
-  modales.
+- `style-commun.css` — les **24 jetons de couleur** dont tout le site est peint,
+  puis l'en-tête, les boutons et les modales. Aucune couleur n'est écrite en dur
+  ailleurs : c'est ce qui permettra d'ajouter un thème en redéfinissant
+  seulement ces jetons. Deux d'entre eux existent précisément pour ça —
+  `--sur-accent`, le texte posé sur un aplat d'accent, et `--alerte` — car un
+  thème à accent clair rendrait illisible un blanc écrit en dur.
 
 ## Données stockées
 

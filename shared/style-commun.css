@@ -16,6 +16,12 @@
   --accent-doux: #f3e5da;
   --ombre: 0 1px 2px rgba(32, 29, 24, 0.06), 0 8px 24px rgba(32, 29, 24, 0.06);
 
+  /* Texte posé sur un aplat d'accent, et couleur d'alerte. Ces deux-là
+     changent avec le thème : sur un accent clair, du blanc devient illisible. */
+  --sur-accent: #ffffff;
+  --alerte: #c9452b;
+  --alerte-sur-accent: #ffd9d2;
+
   /* États des lettres — palette standard */
   --etat-juste: #4a8b4f;
   --etat-present: #d3a127;
@@ -54,6 +60,11 @@
     --etat-texte: #12110c;
     /* Sur le gris sombre des lettres absentes, seul un texte clair reste lisible. */
     --etat-texte-absent: #e6e1d5;
+    /* L'accent sombre est un orange clair : du blanc dessus tombait à 2,65 de
+       contraste, sous le minimum. L'encre du site y tient 6,21. */
+    --sur-accent: #211f18;
+    --alerte: #f08a6d;
+    --alerte-sur-accent: #4a1409;
   }
   :root[data-palette='distincte'] {
     --etat-juste: #3d8ee0;
@@ -151,7 +162,7 @@ a {
 .jm-bouton--principal {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   font-weight: 600;
 }
 

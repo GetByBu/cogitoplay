@@ -57,13 +57,7 @@ main {
 }
 
 .chrono--urgence {
-  color: #c9452b;
-}
-
-@media (prefers-color-scheme: dark) {
-  .chrono--urgence {
-    color: #f08a6d;
-  }
+  color: var(--alerte);
 }
 
 /* ---------- Zone de jeu ---------- */
@@ -114,7 +108,7 @@ main {
 .case-grille--active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   transform: scale(0.96);
 }
 
@@ -166,7 +160,7 @@ main {
 }
 
 .saisie-compte--vide {
-  color: #c9452b;
+  color: var(--alerte);
 }
 
 .saisie--vide .saisie-mot::before {
@@ -181,7 +175,7 @@ main {
 
 .saisie--refus {
   animation: refus 0.4s ease;
-  border-color: #c9452b;
+  border-color: var(--alerte);
 }
 
 @keyframes refus {
@@ -276,11 +270,11 @@ main {
 /* Le mot de la liste qui commence comme la saisie en cours. */
 .mot-trouve--rappel {
   background: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
 }
 
 .mot-trouve--rappel b {
-  color: #fff;
+  color: var(--sur-accent);
 }
 
 .mot-trouve mark {
@@ -343,7 +337,7 @@ main {
 
 .message--succes {
   background: var(--etat-juste) !important;
-  color: #fff !important;
+  color: var(--etat-texte) !important;
 }
 
 .message--refus {
@@ -455,7 +449,7 @@ main {
 /* Un clic refusé — case non voisine, ou déjà prise dans le mot en cours. */
 .case-grille--refus {
   animation: case-refus 0.26s ease;
-  border-color: #c9452b;
+  border-color: var(--alerte);
 }
 
 @keyframes case-refus {

@@ -201,7 +201,7 @@ main {
   flex: 2.2 1 0;
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   font-weight: 700;
 }
 

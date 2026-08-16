@@ -54,7 +54,7 @@ main {
 .niveau--actif {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   font-weight: 650;
 }
 
@@ -160,17 +160,17 @@ main {
 
 .case-sudoku.selectionnee {
   background: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
 }
 
 .case-sudoku.fausse {
-  color: #c9452b;
+  color: var(--alerte);
   text-decoration: underline;
   text-decoration-thickness: 2px;
 }
 
 .case-sudoku.selectionnee.fausse {
-  color: #ffd9d2;
+  color: var(--alerte-sur-accent);
 }
 
 /* Les notes : trois par trois dans la case. */
@@ -253,7 +253,7 @@ main {
 .outils .jm-bouton.actif {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--sur-accent);
   font-weight: 650;
 }
 
@@ -265,7 +265,7 @@ main {
 
 .message--succes {
   background: var(--etat-juste) !important;
-  color: #fff !important;
+  color: var(--etat-texte) !important;
 }
 
 .message--refus {
@@ -333,13 +333,7 @@ main {
 }
 
 .erreurs--critique {
-  color: #c9452b;
-}
-
-@media (prefers-color-scheme: dark) {
-  .erreurs--critique {
-    color: #f08a6d;
-  }
+  color: var(--alerte);
 }
 
 .ligne-boutons {
